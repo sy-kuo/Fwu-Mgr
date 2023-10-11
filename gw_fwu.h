@@ -7,9 +7,6 @@
 #define YES  1
 #define NO   0
 
-extern const char * whos[];
-extern const char * evts[];
-
 typedef enum {
     FW_UPDATE_ERROR_CODE_SUCESS = 0,
     FW_UPDATE_ERROR_CODE_FIRMWARE_UPDATE_TO_DATE,
@@ -47,15 +44,34 @@ typedef enum {
 
 typedef struct
 {
+    int32_t  mgr;
+    int32_t  supv;
+    int32_t  src;
+    int32_t  dst;
+} fwu_statuses_s;
+
+typedef struct
+{
+    uint32_t ver;
+    uint32_t length;
+    uint32_t size;
     void * pdata;
     int32_t  status;
-    uint32_t timeout;
-    uint32_t evt_id;
-    int32_t  mgr_status;
-    int32_t  supv_status;
-    int32_t  src_status;
-    int32_t  dst_status;
-} fwu_parms_ctrl_s;
+} fwu_ready_s;
+
+typedef struct
+{
+    uint32_t ver;
+    uint32_t length;
+    uint32_t size;
+    void * pdata;
+    int32_t  status;
+} fwu_checkout_s;
+
+typedef struct
+{
+    int32_t  status;
+} fwu_verify_s;
 
 typedef struct
 {
@@ -63,17 +79,72 @@ typedef struct
     uint32_t size;
     uint32_t start_addr;
     uint32_t length;
-    int32_t  status;
     uint8_t level;
     uint32_t timeout_max;
     uint32_t timeout_min;
-    uint8_t * data;
+    void * pdata;
+    int32_t  status;
+} fwu_prepare_s;
+
+typedef struct
+{
+    uint32_t length;
+    uint8_t * pdata;
+    int32_t  status;
+} fwu_copy_s;
+
+typedef struct
+{
+    uint32_t start_addr;
+    uint32_t length;
+    uint32_t size;
+    int32_t  status;
+} fwu_paste_s;
+
+typedef struct
+{
+    int32_t  status;
+} fwu_finish_s;
+
+typedef struct
+{
+    uint32_t id;
+    uint32_t evt_id;
+    fwu_statuses_s statuses;
+    int32_t  status;
+} fwu_report_s;
+
+typedef struct
+{
+    uint32_t id;
+    void * pdata;
+    int32_t  status;
+} fwu_parms_mgr_s;
+
+typedef struct
+{
+    uint32_t timeout;
+    void * pdata;
+    int32_t  status;
+} fwu_parms_supv_s;
+
+typedef struct
+{
+    uint32_t ver;
+    uint32_t size;
+    uint32_t start_addr;
+    uint32_t length;
+    uint8_t level;
+    uint32_t timeout_max;
+    uint32_t timeout_min;
+    void * pdata;
+    int32_t  status;
 } fwu_params_s;
 
 class GW_FwuMethod
 {
 public:
-    virtual int checkout(void) {return 0;};
+    virtual int checkout(void * params) {return 0;};
     virtual int prepare(void * params) {return 0;};
     virtual int copy(uint32_t start_addr, uint32_t length) {return 0;};
     virtual int paste(uint8_t * data, uint32_t length) {return 0;};
@@ -97,11 +168,11 @@ private:
     Timeout tmr;
     fwu_params_s tmp;
 
-    int checkout(uint32_t timeout_ms)
+    int checkout(void * params, uint32_t timeout_ms)
     {
         evt = FW_UPDATE_EVENT_CHECKOUTED;
         timeout_activate(timeout_ms);
-        checkout();
+        checkout(params);
         return 0;
     }
     int prepare(void * params, uint32_t timeout_ms)
@@ -180,8 +251,19 @@ private:
     GW_FwuMethod * src;
     GW_FwuMethod * dst;
 
-    fwu_parms_ctrl_s mgr_params;
-    fwu_parms_ctrl_s supv_params;
+    fwu_statuses_s reply_s;
+    fwu_statuses_s ack_s;
+
+    fwu_ready_s ready_s;
+    fwu_checkout_s checkout_s;
+    fwu_verify_s verify_s;
+    fwu_prepare_s prepare_s;
+    fwu_copy_s copy_s;
+    fwu_paste_s paste_s;
+    fwu_report_s report_s;
+
+    fwu_parms_mgr_s mgr_params;
+    fwu_parms_supv_s supv_params;
     fwu_params_s src_params;
     fwu_params_s dst_params;
 
@@ -214,5 +296,7 @@ private:
 
 void gw_fwu_init();
 
+extern const char * whos[], * evts[];
 extern GW_FwUpdate * m_FwuMgr;
+
 #endif

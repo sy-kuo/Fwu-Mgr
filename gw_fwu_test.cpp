@@ -40,14 +40,23 @@ uint8_t src2_binary[] = {
     0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F
 };
 
-fwu_parms_ctrl_s supv1_params;
-fwu_parms_ctrl_s supv2_params;
+fwu_parms_supv_s supv1_params;
+fwu_parms_supv_s supv2_params;
 
 fwu_params_s src1_params = {.ver = SRC1_TEST_VERSION, .size = 256, .length = 80};
 fwu_params_s src2_params = {.ver = SRC2_TEST_VERSION, .size = 256, .length = 80};
 
 fwu_params_s dst1_params = {.ver = DST1_TEST_VERSION, .length = 16};
 fwu_params_s dst2_params = {.ver = DST2_TEST_VERSION, .length = 32};
+
+fwu_report_s * p_report;
+
+fwu_checkout_s checkout_src_1 = {.ver = SRC1_TEST_VERSION, .length = 80, .size = 256}, checkout_src_2 = {.ver = SRC2_TEST_VERSION, .length = 80, .size = 256}, checkout_dst_1 = {.ver = DST1_TEST_VERSION, .length = 16}, checkout_dst_2 = {.ver = DST2_TEST_VERSION, .length = 32};
+fwu_prepare_s prepare_src_1, prepare_src_2, prepare_dst_1, prepare_dst_2;
+fwu_copy_s copy_src_1, copy_src_2;
+fwu_paste_s paste_dst_1, paste_dst_2;
+fwu_finish_s finish_src_1, finish_src_2, finish_dst_1, finish_dst_2;
+fwu_report_s report_supv_1, report_supv_2;
 
 GW_Supv_1 supv_1;
 GW_Src_1 src_1;
