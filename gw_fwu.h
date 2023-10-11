@@ -48,6 +48,12 @@ typedef struct
     int32_t  supv;
     int32_t  src;
     int32_t  dst;
+} fwu_roles_s;
+
+typedef struct
+{
+    fwu_roles_s ack;
+    fwu_roles_s res;
 } fwu_statuses_s;
 
 typedef struct
@@ -110,7 +116,7 @@ typedef struct
 {
     uint32_t id;
     uint32_t evt_id;
-    fwu_statuses_s statuses;
+    fwu_roles_s statuses;
     int32_t  status;
 } fwu_report_s;
 
@@ -251,8 +257,7 @@ private:
     GW_FwuMethod * src;
     GW_FwuMethod * dst;
 
-    fwu_statuses_s stutus_s;
-    fwu_statuses_s ack_s;
+    fwu_statuses_s statuses;
 
     fwu_ready_s ready_s;
     fwu_checkout_s checkout_s;
