@@ -94,7 +94,7 @@ void GW_FwUpdate::checkout_parse(char * data, uint8_t & supv_index, uint8_t & sr
     parsed_key[0] = (char *)"mgr";
     parsed_key[1] = (char *)"id";
     parsed_prepare(&content, (char *)data, parsed_key, 2);
-    mgr_params.id = atoi(content);
+    mgr_id = atoi(content);
 
     parsed_key[0] = (char *)"supv";
     parsed_key[1] = (char *)"id";
@@ -106,7 +106,7 @@ void GW_FwUpdate::checkout_parse(char * data, uint8_t & supv_index, uint8_t & sr
     }
     parsed_key[1] = (char *)"to";
     parsed_prepare(&content, (char *)data, parsed_key, 2);
-    supv_params.timeout = atoi(content);
+    supv_timeout = atoi(content);
 
     parsed_key[0] = (char *)"src";
     parsed_key[1] = (char *)"id";
@@ -164,7 +164,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         case FW_UPDATE_EVENT_READY_CHECKOUT:
         {
             uint8_t supv_index, src_index, dst_index;
-            fwu_ready_s * p_ready = (fwu_ready_s *)data;
+            fwu_params_s * p_ready = (fwu_params_s *)data;
             statuses.ack.supv = p_ready->status;
             statuses.res.supv = p_ready->status;
             printf("Ready data: %s \r\n", (char *)p_ready->pdata);
@@ -173,16 +173,16 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
             if(statuses.ack.supv != FW_UPDATE_ERROR_CODE_NULL)
             {
                 statuses.ack.src = FW_UPDATE_ERROR_CODE_NULL;
-                src->checkout(&checkout_s, src_params.timeout_max);
+                src->checkout(&infos, src_params.timeout_max);
 
                 statuses.ack.dst = FW_UPDATE_ERROR_CODE_NULL;
-                dst->checkout(&checkout_s, dst_params.timeout_max);
+                dst->checkout(&infos, dst_params.timeout_max);
             }
             break;
         }
         case FW_UPDATE_EVENT_CHECKOUTED:
         {
-            fwu_checkout_s * p_checkout = (fwu_checkout_s *)data;
+            fwu_params_s * p_checkout = (fwu_params_s *)data;
             if(who == FW_UPDATE_ROLE_SOURCE)
             {
                 src_params.ver = p_checkout->ver;
@@ -216,7 +216,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         }
         case FW_UPDATE_EVENT_VERIFY_DONE:
         {
-            fwu_verify_s * p_verify = (fwu_verify_s *)data;
+            fwu_params_s * p_verify = (fwu_params_s *)data;
             if(who == FW_UPDATE_ROLE_MANAGER)
             {
                 statuses.ack.mgr = p_verify->status;
@@ -229,16 +229,16 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
                 {
                     uint32_t max_length = src_params.length >= dst_params.length? dst_params.length: src_params.length;
 
-                    prepare_s.ver = src_params.ver;
-                    prepare_s.size = src_params.size;
-                    prepare_s.start_addr = 0;
-                    prepare_s.length = max_length;
+                    infos.ver = src_params.ver;
+                    infos.size = src_params.size;
+                    infos.start_addr = 0;
+                    infos.length = max_length;
 
                     statuses.ack.src = FW_UPDATE_ERROR_CODE_NULL;
-                    src->prepare(&prepare_s, src_params.timeout_max);
+                    src->prepare(&infos, src_params.timeout_max);
 
                     statuses.ack.dst = FW_UPDATE_ERROR_CODE_NULL;
-                    dst->prepare(&prepare_s, dst_params.timeout_max);
+                    dst->prepare(&infos, dst_params.timeout_max);
                 }
                 else
                 {
@@ -250,7 +250,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         }
         case FW_UPDATE_EVENT_PREPARED:
         {
-            fwu_prepare_s * p_prepare = (fwu_prepare_s *)data;
+            fwu_params_s * p_prepare = (fwu_params_s *)data;
             if(who == FW_UPDATE_ROLE_SOURCE)
             {
                 statuses.ack.src = p_prepare->status;
@@ -268,8 +268,8 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
                 {
                     statuses.ack.src = FW_UPDATE_ERROR_CODE_NULL;
 
-                    paste_s.start_addr = prepare_s.start_addr;
-                    src->copy(paste_s.start_addr, prepare_s.length, src_params.timeout_max);
+                    infos.start_addr = infos.start_addr;
+                    src->copy(infos.start_addr, infos.length, src_params.timeout_max);
                 }
                 else
                 {
@@ -281,7 +281,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         }
         case FW_UPDATE_EVENT_COPY_DONE:
         {
-            fwu_copy_s * p_copy = (fwu_copy_s *)data;
+            fwu_params_s * p_copy = (fwu_params_s *)data;
             if(who == FW_UPDATE_ROLE_SOURCE)
             {
                 statuses.ack.src = p_copy->status;
@@ -292,9 +292,9 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
             {
                 if(statuses.ack.src == FW_UPDATE_ERROR_CODE_SUCESS)
                 {
-                    copy_s.pdata = p_copy->pdata;
+                    infos.pdata = p_copy->pdata;
                     statuses.ack.dst = FW_UPDATE_ERROR_CODE_NULL;
-                    dst->paste(copy_s.pdata, prepare_s.length, dst_params.timeout_max);
+                    dst->paste((uint8_t *)infos.pdata, infos.length, dst_params.timeout_max);
                 }
                 else
                 {
@@ -305,7 +305,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         }
         case FW_UPDATE_EVENT_PASTE_DONE:
         {
-            fwu_paste_s * p_paste = (fwu_paste_s *)data;
+            fwu_params_s * p_paste = (fwu_params_s *)data;
             if(who == FW_UPDATE_ROLE_DESTINATION)
             {
                 statuses.ack.dst = p_paste->status;
@@ -316,9 +316,9 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
             {
                 if(statuses.ack.dst == FW_UPDATE_ERROR_CODE_SUCESS)
                 {
-                    paste_s.start_addr = p_paste->start_addr;
+                    infos.start_addr = p_paste->start_addr;
  
-                    if(paste_s.start_addr >= src_params.size)
+                    if(infos.start_addr >= src_params.size)
                     {
                         statuses.ack.src = FW_UPDATE_ERROR_CODE_NULL;
                         src->finish(src_params.timeout_max);
@@ -328,7 +328,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
                     else
                     {
                         statuses.ack.src = FW_UPDATE_ERROR_CODE_NULL;
-                        src->copy(paste_s.start_addr, prepare_s.length, src_params.timeout_max);
+                        src->copy(infos.start_addr, infos.length, src_params.timeout_max);
                     }
                 }
                 else
@@ -340,7 +340,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         }
         case FW_UPDATE_EVENT_FINISH_DONE:
         {
-            fwu_finish_s * p_finish = (fwu_finish_s *)data;
+            fwu_params_s * p_finish = (fwu_params_s *)data;
             if(who == FW_UPDATE_ROLE_SOURCE)
             {
                 statuses.ack.src = p_finish->status;
@@ -368,7 +368,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         }
         case FW_UPDATE_EVENT_REPORT_DONE:
         {
-            fwu_report_s * p_report = (fwu_report_s *)data;
+            fwu_params_s * p_report = (fwu_params_s *)data;
             if(who == FW_UPDATE_ROLE_SUPERVISOR)
             {
                 statuses.ack.supv = p_report->status;
@@ -396,11 +396,11 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
 
     if(try_report == YES)
     {
-        report_s.id = mgr_params.id;
-        report_s.evt_id = event;
-        memcpy(&report_s.statuses, &statuses.res, sizeof(fwu_roles_s));
+        infos.id = mgr_id;
+        infos.evt_id = event;
+        memcpy(&infos.statuses, &statuses.res, sizeof(fwu_roles_s));
         statuses.ack.supv = FW_UPDATE_ERROR_CODE_NULL;
-        supv->report((void *)&report_s, supv_params.timeout);
+        supv->report((void *)&infos, supv_timeout);
     }
 
     return;
@@ -418,10 +418,10 @@ void GW_FwUpdate::ready_checkout(char * params)
     statuses.res.src = FW_UPDATE_ERROR_CODE_SUCESS;
     statuses.res.dst = FW_UPDATE_ERROR_CODE_SUCESS;
 
-    ready_s.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    ready_s.pdata = (void *)params;
+    infos.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    infos.pdata = (void *)params;
 
-    evt_push(FW_UPDATE_ROLE_SUPERVISOR, FW_UPDATE_EVENT_READY_CHECKOUT, (void *)&ready_s);
+    evt_push(FW_UPDATE_ROLE_SUPERVISOR, FW_UPDATE_EVENT_READY_CHECKOUT, (void *)&infos);
 }
 
 void GW_FwUpdate::evt_push(int who, int event, void * data)
@@ -431,23 +431,22 @@ void GW_FwUpdate::evt_push(int who, int event, void * data)
 
 void GW_FwUpdate::verify(void)
 {
-    printf("Verifying! Src: %X. Dst: %X \r\n", src_params.ver, dst_params.ver);
-    verify_s.status = FW_UPDATE_ERROR_CODE_FIRMWARE_UPDATE_TO_DATE;
+    infos.status = FW_UPDATE_ERROR_CODE_FIRMWARE_UPDATE_TO_DATE;
     if(src_params.ver != dst_params.ver)
     {
         if(dst_params.level == FW_UPDATE_VERSION_LEVEL_NORMAL)
         {
             if(src_params.ver > dst_params.ver)
             {
-                verify_s.status = FW_UPDATE_ERROR_CODE_SUCESS;
+                infos.status = FW_UPDATE_ERROR_CODE_SUCESS;
             }
         }
         else if(dst_params.level == FW_UPDATE_VERSION_LEVEL_FORCE)
         {
-            verify_s.status = FW_UPDATE_ERROR_CODE_SUCESS;
+            infos.status = FW_UPDATE_ERROR_CODE_SUCESS;
         }
     }
-    evt_push(FW_UPDATE_ROLE_MANAGER, FW_UPDATE_EVENT_VERIFY_DONE, (void *)&verify_s);
+    evt_push(FW_UPDATE_ROLE_MANAGER, FW_UPDATE_EVENT_VERIFY_DONE, (void *)&infos);
 }
 
 void GW_FwUpdate::role_list_set(uint8_t supv_index, uint8_t src_index, uint8_t dst_index)

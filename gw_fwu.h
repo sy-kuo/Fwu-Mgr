@@ -59,90 +59,15 @@ typedef struct
 typedef struct
 {
     uint32_t ver;
+    uint32_t size;
     uint32_t length;
-    uint32_t size;
-    void * pdata;
-    int32_t  status;
-} fwu_ready_s;
-
-typedef struct
-{
-    uint32_t ver;
-    uint32_t length;
-    uint32_t size;
-    void * pdata;
-    int32_t  status;
-} fwu_checkout_s;
-
-typedef struct
-{
-    int32_t  status;
-} fwu_verify_s;
-
-typedef struct
-{
-    uint32_t ver;
-    uint32_t size;
     uint32_t start_addr;
-    uint32_t length;
     uint8_t level;
     uint32_t timeout_max;
     uint32_t timeout_min;
-    void * pdata;
-    int32_t  status;
-} fwu_prepare_s;
-
-typedef struct
-{
-    uint32_t length;
-    uint8_t * pdata;
-    int32_t  status;
-} fwu_copy_s;
-
-typedef struct
-{
-    uint32_t start_addr;
-    uint32_t length;
-    uint32_t size;
-    int32_t  status;
-} fwu_paste_s;
-
-typedef struct
-{
-    int32_t  status;
-} fwu_finish_s;
-
-typedef struct
-{
     uint32_t id;
     uint32_t evt_id;
     fwu_roles_s statuses;
-    int32_t  status;
-} fwu_report_s;
-
-typedef struct
-{
-    uint32_t id;
-    void * pdata;
-    int32_t  status;
-} fwu_parms_mgr_s;
-
-typedef struct
-{
-    uint32_t timeout;
-    void * pdata;
-    int32_t  status;
-} fwu_parms_supv_s;
-
-typedef struct
-{
-    uint32_t ver;
-    uint32_t size;
-    uint32_t start_addr;
-    uint32_t length;
-    uint8_t level;
-    uint32_t timeout_max;
-    uint32_t timeout_min;
     void * pdata;
     int32_t  status;
 } fwu_params_s;
@@ -257,20 +182,13 @@ private:
     GW_FwuMethod * src;
     GW_FwuMethod * dst;
 
+    uint32_t mgr_id;
+    uint32_t supv_timeout;
     fwu_statuses_s statuses;
 
-    fwu_ready_s ready_s;
-    fwu_checkout_s checkout_s;
-    fwu_verify_s verify_s;
-    fwu_prepare_s prepare_s;
-    fwu_copy_s copy_s;
-    fwu_paste_s paste_s;
-    fwu_report_s report_s;
-
-    fwu_parms_mgr_s mgr_params;
-    fwu_parms_supv_s supv_params;
     fwu_params_s src_params;
     fwu_params_s dst_params;
+    fwu_params_s infos;
 
     std::vector<GW_FwuMethod *> supv_list;
     std::vector<GW_FwuMethod *> src_list;
