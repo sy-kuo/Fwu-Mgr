@@ -40,12 +40,6 @@ uint8_t src2_binary[] = {
     0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F
 };
 
-fwu_params_s src1_params = {.ver = SRC1_TEST_VERSION, .size = 256, .length = 80};
-fwu_params_s src2_params = {.ver = SRC2_TEST_VERSION, .size = 256, .length = 80};
-
-fwu_params_s dst1_params = {.ver = DST1_TEST_VERSION, .length = 16};
-fwu_params_s dst2_params = {.ver = DST2_TEST_VERSION, .length = 32};
-
 fwu_params_s src1_info = {.ver = SRC1_TEST_VERSION, .size = 256, .length = 80}, \
              src2_info = {.ver = SRC2_TEST_VERSION, .size = 256, .length = 80}, \
              dst1_info = {.ver = DST1_TEST_VERSION, .length = 16}, \

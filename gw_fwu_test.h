@@ -14,9 +14,6 @@
 
 extern uint32_t data_size;
 extern uint8_t src1_binary[], src2_binary[];
-extern fwu_params_s src1_params, src2_params;
-extern fwu_params_s dst1_params, dst2_params;
-
 extern fwu_params_s src1_info, src2_info, dst1_info, dst2_info, supv1_info, supv2_info;
 
 extern uint8_t this_case;
@@ -112,7 +109,7 @@ public:
         reply(FW_UPDATE_EVENT_FINISH_DONE, (void *)p_res);
         return 0;
     }
-    uint8_t * p_binary = src1_binary;
+    uint8_t * p_binary = src2_binary;
     char * class_id = (char *)"SRC2";
     fwu_params_s * p_res = &src2_info;
 };

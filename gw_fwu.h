@@ -72,6 +72,17 @@ typedef struct
     int32_t  status;
 } fwu_params_s;
 
+class GW_Params
+{
+public:
+    uint32_t id;
+    uint32_t timeout;
+    fwu_statuses_s statuses;
+    fwu_params_s src;
+    fwu_params_s dst;
+    fwu_params_s proc;
+};
+
 class GW_FwuMethod
 {
 public:
@@ -182,13 +193,7 @@ private:
     GW_FwuMethod * src;
     GW_FwuMethod * dst;
 
-    uint32_t mgr_id;
-    uint32_t supv_timeout;
-    fwu_statuses_s statuses;
-
-    fwu_params_s src_params;
-    fwu_params_s dst_params;
-    fwu_params_s infos;
+    GW_Params infos;
 
     std::vector<GW_FwuMethod *> supv_list;
     std::vector<GW_FwuMethod *> src_list;
