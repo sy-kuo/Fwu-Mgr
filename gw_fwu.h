@@ -251,7 +251,7 @@ private:
     GW_FwuMethod * src;
     GW_FwuMethod * dst;
 
-    fwu_statuses_s reply_s;
+    fwu_statuses_s stutus_s;
     fwu_statuses_s ack_s;
 
     fwu_ready_s ready_s;
