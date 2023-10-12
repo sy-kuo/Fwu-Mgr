@@ -321,7 +321,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
                 if(infos.mgr.ack.dst == FW_UPDATE_ERROR_CODE_SUCESS)
                 {
                     infos.mgr.start_addr = p_paste->start_addr;
- 
+
                     if(infos.mgr.start_addr >= infos.src.size)
                     {
                         infos.mgr.ack.src = FW_UPDATE_ERROR_CODE_NULL;
