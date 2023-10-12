@@ -401,7 +401,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
     if(try_report == YES)
     {
         infos.mgr.evt_id = event;
-        memcpy(&infos.mgr.res, &infos.mgr.res, sizeof(GW_Roles_code));
+        memcpy(&infos.mgr.res, &infos.mgr.res, sizeof(GW_Roles_Code));
         infos.mgr.ack.supv = FW_UPDATE_ERROR_CODE_NULL;
         supv->report((void *)&infos.mgr, infos.mgr.timeout);
     }

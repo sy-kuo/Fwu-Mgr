@@ -43,7 +43,7 @@ typedef enum {
     FW_UPDATE_VERSION_LEVEL_FORCE
 } FW_UPDATE_VERSION_LEVEL_E;
 
-class GW_Roles_code
+class GW_Roles_Code
 {
 public:
     int32_t  mgr;
@@ -73,8 +73,8 @@ public:
     uint32_t evt_id;
     uint32_t verify;
     uint32_t timeout;
-    GW_Roles_code res;
-    GW_Roles_code ack;
+    GW_Roles_Code res;
+    GW_Roles_Code ack;
 };
 
 class GW_Params
