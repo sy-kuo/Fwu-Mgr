@@ -36,6 +36,9 @@ public:
     virtual int checkout(void * params) override
     {
         printf("<--- %s checkout!\r\n", class_id);
+        // p_res->ver
+        // p_res->size
+        // p_res->length
         p_res->status = src_checkout_status();
         reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)p_res);
         return 0;
@@ -78,6 +81,9 @@ public:
     virtual int checkout(void * params) override
     {
         printf("<--- %s checkout!\r\n", class_id);
+        // p_res->ver
+        // p_res->size
+        // p_res->length
         p_res->status = src_checkout_status();
         reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)p_res);
         return 0;
@@ -122,6 +128,8 @@ public:
         if(this_case != 11)
         {
             printf("<--- %s checkout!\r\n", class_id);
+            // p_res->ver
+            // p_res->length
             p_res->status = dst_checkout_status();
             reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)p_res);
         }
@@ -165,6 +173,8 @@ public:
         if(this_case != 11)
         {
             printf("<--- %s checkout!\r\n", class_id);
+            // p_res->ver
+            // p_res->length
             p_res->status = dst_checkout_status();
             reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)p_res);
         }
