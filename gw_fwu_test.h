@@ -206,7 +206,7 @@ public:
     virtual int report(void * params) override
     {
         memcpy(p_res, (fwu_params_s *)params, sizeof(fwu_params_s));
-        printf("<--- %s report! Id: %d Evt: %s! Mgr: %d Supv: %d Src: %d Dst: %d \r\n", class_id, p_res->id, evts[p_res->evt_id], p_res->statuses.mgr, p_res->statuses.supv, p_res->statuses.src, p_res->statuses.dst);
+        printf("<--- %s report! Id: %d Evt: %s! Status code mgr: %d supv: %d src: %d dst: %d \r\n", class_id, p_res->id, evts[p_res->evt_id], p_res->statuses.mgr, p_res->statuses.supv, p_res->statuses.src, p_res->statuses.dst);
         p_res->status = supv_report_status();
         reply(FW_UPDATE_EVENT_REPORT_DONE, (void *)p_res);
         return 0;
@@ -221,7 +221,7 @@ public:
     virtual int report(void * params) override
     {
         memcpy(p_res, (fwu_params_s *)params, sizeof(fwu_params_s));
-        printf("<--- %s report! Id: %d Evt: %s! Mgr: %d Supv: %d Src: %d Dst: %d \r\n", class_id, p_res->id, evts[p_res->evt_id], p_res->statuses.mgr, p_res->statuses.supv, p_res->statuses.src, p_res->statuses.dst);
+        printf("<--- %s report! Id: %d Evt: %s! Status code mgr: %d supv: %d src: %d dst: %d \r\n", class_id, p_res->id, evts[p_res->evt_id], p_res->statuses.mgr, p_res->statuses.supv, p_res->statuses.src, p_res->statuses.dst);
         p_res->status = supv_report_status();
         reply(FW_UPDATE_EVENT_REPORT_DONE, (void *)p_res);
         return 0;
