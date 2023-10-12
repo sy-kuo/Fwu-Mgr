@@ -42,44 +42,45 @@ typedef enum {
     FW_UPDATE_VERSION_LEVEL_FORCE
 } FW_UPDATE_VERSION_LEVEL_E;
 
-typedef struct
+class GW_Roles_code
 {
+public:
     int32_t  mgr;
     int32_t  supv;
     int32_t  src;
     int32_t  dst;
-} fwu_roles_s;
+};
 
-typedef struct
+class GW_Role_Basic
 {
-    fwu_roles_s ack;
-    fwu_roles_s res;
-} fwu_statuses_s;
-
-typedef struct
-{
+public:
     uint32_t ver;
     uint32_t size;
-    uint32_t length;
     uint32_t start_addr;
+    uint32_t length;
+    void * pdata;
     uint8_t level;
     uint32_t timeout_max;
     uint32_t timeout_min;
+    int32_t  status;
+};
+
+class GW_Role_Mgr: public GW_Role_Basic
+{
+public:
     uint32_t id;
     uint32_t evt_id;
-    fwu_roles_s statuses;
-    void * pdata;
-    int32_t  status;
-} fwu_params_s;
+    uint32_t timeout;
+    GW_Roles_code res;
+    GW_Roles_code ack;
+};
 
 class GW_Params
 {
 public:
-    uint32_t timeout;
-    fwu_statuses_s statuses;
-    fwu_params_s src;
-    fwu_params_s dst;
-    fwu_params_s mgr;
+    GW_Role_Basic src;
+    GW_Role_Basic dst;
+    GW_Role_Mgr mgr;
 };
 
 class GW_FwuMethod
@@ -107,7 +108,7 @@ private:
     FW_UPDATE_EVENT_E evt;
     std::function<void(int who, int event, void * data)> f_reply;
     Timeout tmr;
-    fwu_params_s tmp;
+    GW_Role_Basic tmp;
 
     int checkout(void * params, uint32_t timeout_ms)
     {

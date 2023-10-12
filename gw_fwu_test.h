@@ -14,7 +14,7 @@
 
 extern uint32_t data_size;
 extern uint8_t src1_binary[], src2_binary[];
-extern fwu_params_s src1_info, src2_info, dst1_info, dst2_info, supv1_info, supv2_info;
+extern GW_Role_Basic src1_info, src2_info, dst1_info, dst2_info, supv1_info, supv2_info;
 
 extern uint8_t this_case;
 
@@ -47,7 +47,7 @@ public:
     {
         if(this_case != 10)
         {
-            fwu_params_s * p_params = (fwu_params_s *)params;
+            GW_Role_Basic * p_params = (GW_Role_Basic *)params;
             p_res->length = p_params->length;
             p_res->size = p_params->size;
             p_res->status = src_prepare_status();
@@ -72,7 +72,7 @@ public:
     }
     uint8_t * p_binary = src1_binary;
     char * class_id = (char *)"SRC1";
-    fwu_params_s * p_res = &src1_info;
+    GW_Role_Basic * p_res = &src1_info;
 };
 
 class GW_Src_2: public GW_FwuMethod
@@ -92,7 +92,7 @@ public:
     {
         if(this_case != 10)
         {
-            fwu_params_s * p_params = (fwu_params_s *)params;
+            GW_Role_Basic * p_params = (GW_Role_Basic *)params;
             p_res->length = p_params->length;
             p_res->size = p_params->size;
             p_res->status = src_prepare_status();
@@ -117,7 +117,7 @@ public:
     }
     uint8_t * p_binary = src2_binary;
     char * class_id = (char *)"SRC2";
-    fwu_params_s * p_res = &src2_info;
+    GW_Role_Basic * p_res = &src2_info;
 };
 
 class GW_Dst_1: public GW_FwuMethod
@@ -137,7 +137,7 @@ public:
     }
     virtual int prepare(void * params) override
     {
-        fwu_params_s * p_params = (fwu_params_s *)params;
+        GW_Role_Basic * p_params = (GW_Role_Basic *)params;
         p_res->start_addr = 0;
         p_res->length = p_params->length;
         p_res->size = p_params->size;
@@ -162,7 +162,7 @@ public:
         return 0;
     }
     char * class_id = (char *)"DST1";
-    fwu_params_s * p_res = &dst1_info;
+    GW_Role_Basic * p_res = &dst1_info;
 };
 
 class GW_Dst_2: public GW_FwuMethod
@@ -182,7 +182,7 @@ public:
     }
     virtual int prepare(void * params) override
     {
-        fwu_params_s * p_params = (fwu_params_s *)params;
+        GW_Role_Basic * p_params = (GW_Role_Basic *)params;
         p_res->start_addr = 0;
         p_res->length = p_params->length;
         p_res->size = p_params->size;
@@ -207,7 +207,7 @@ public:
         return 0;
     }
     char * class_id = (char *)"DST2";
-    fwu_params_s * p_res = &dst2_info;
+    GW_Role_Basic * p_res = &dst2_info;
 };
 
 class GW_Supv_1: public GW_FwuMethod
@@ -215,14 +215,14 @@ class GW_Supv_1: public GW_FwuMethod
 public:
     virtual int report(void * params) override
     {
-        memcpy(p_res, (fwu_params_s *)params, sizeof(fwu_params_s));
-        printf("<--- %s report! Id: %d Evt: %s! Status code mgr: %d supv: %d src: %d dst: %d \r\n", class_id, p_res->id, evts[p_res->evt_id], p_res->statuses.mgr, p_res->statuses.supv, p_res->statuses.src, p_res->statuses.dst);
+        GW_Role_Mgr * p_info = (GW_Role_Mgr *)params;
+        printf("<--- %s report! Id: %d Evt: %s! Status code mgr: %d supv: %d src: %d dst: %d \r\n", class_id, p_info->id, evts[p_info->evt_id], p_info->res.mgr, p_info->res.supv, p_info->res.src, p_info->res.dst);
         p_res->status = supv_report_status();
         reply(FW_UPDATE_EVENT_REPORT_DONE, (void *)p_res);
         return 0;
     }
     char * class_id = (char *)"SUPV1";
-    fwu_params_s * p_res = &supv1_info;
+    GW_Role_Basic * p_res = &supv1_info;
 };
 
 class GW_Supv_2: public GW_FwuMethod
@@ -230,14 +230,14 @@ class GW_Supv_2: public GW_FwuMethod
 public:
     virtual int report(void * params) override
     {
-        memcpy(p_res, (fwu_params_s *)params, sizeof(fwu_params_s));
-        printf("<--- %s report! Id: %d Evt: %s! Status code mgr: %d supv: %d src: %d dst: %d \r\n", class_id, p_res->id, evts[p_res->evt_id], p_res->statuses.mgr, p_res->statuses.supv, p_res->statuses.src, p_res->statuses.dst);
+        GW_Role_Mgr * p_info = (GW_Role_Mgr *)params;
+        printf("<--- %s report! Id: %d Evt: %s! Status code mgr: %d supv: %d src: %d dst: %d \r\n", class_id, p_info->id, evts[p_info->evt_id], p_info->res.mgr, p_info->res.supv, p_info->res.src, p_info->res.dst);
         p_res->status = supv_report_status();
         reply(FW_UPDATE_EVENT_REPORT_DONE, (void *)p_res);
         return 0;
     }
     char * class_id = (char *)"SUPV2";
-    fwu_params_s * p_res = &supv2_info;
+    GW_Role_Basic * p_res = &supv2_info;
 };
 
 extern GW_Supv_1 supv_1;

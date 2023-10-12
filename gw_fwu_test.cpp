@@ -40,7 +40,7 @@ uint8_t src2_binary[] = {
     0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F
 };
 
-fwu_params_s src1_info = {.ver = SRC1_TEST_VERSION, .size = 256, .length = 80}, \
+GW_Role_Basic src1_info = {.ver = SRC1_TEST_VERSION, .size = 256, .length = 80}, \
              src2_info = {.ver = SRC2_TEST_VERSION, .size = 256, .length = 80}, \
              dst1_info = {.ver = DST1_TEST_VERSION, .length = 16}, \
              dst2_info = {.ver = DST2_TEST_VERSION, .length = 32}, \
