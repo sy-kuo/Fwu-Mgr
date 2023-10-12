@@ -60,9 +60,9 @@ public:
     uint32_t start_addr;
     uint32_t length;
     void * pdata;
-    uint8_t level;
     uint32_t timeout_max;
     uint32_t timeout_min;
+    uint8_t level;
     int32_t  status;
 };
 
