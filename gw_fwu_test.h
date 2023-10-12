@@ -13,7 +13,6 @@
 #define FWU_READY_PREPARE_2             "{\"mgr\":{\"id\":123,\"verify\":1},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
 #define FWU_READY_PREPARE_3             "{\"mgr\":{\"id\":321,\"verify\":1},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":0}}"
 
-extern uint32_t data_size;
 extern uint8_t src1_binary[], src2_binary[];
 extern GW_Role_Basic src1_info, src2_info, dst1_info, dst2_info, supv1_info, supv2_info;
 
