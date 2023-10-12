@@ -80,7 +80,7 @@ public:
     fwu_statuses_s statuses;
     fwu_params_s src;
     fwu_params_s dst;
-    fwu_params_s proc;
+    fwu_params_s mgr;
 };
 
 class GW_FwuMethod
