@@ -94,7 +94,7 @@ void GW_FwUpdate::checkout_parse(char * data, uint8_t & supv_index, uint8_t & sr
     parsed_key[0] = (char *)"mgr";
     parsed_key[1] = (char *)"id";
     parsed_prepare(&content, (char *)data, parsed_key, 2);
-    infos.id = atoi(content);
+    infos.mgr.id = atoi(content);
 
     parsed_key[0] = (char *)"supv";
     parsed_key[1] = (char *)"id";
@@ -396,7 +396,6 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
 
     if(try_report == YES)
     {
-        infos.mgr.id = infos.id;
         infos.mgr.evt_id = event;
         memcpy(&infos.mgr.statuses, &infos.statuses.res, sizeof(fwu_roles_s));
         infos.statuses.ack.supv = FW_UPDATE_ERROR_CODE_NULL;

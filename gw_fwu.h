@@ -75,7 +75,6 @@ typedef struct
 class GW_Params
 {
 public:
-    uint32_t id;
     uint32_t timeout;
     fwu_statuses_s statuses;
     fwu_params_s src;
