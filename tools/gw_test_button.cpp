@@ -11,11 +11,19 @@ void btn1_press(void)
     if(!is_btn1_pressed)
     {
         is_btn1_pressed = true;
-        
-        if(this_case != 12)
-            m_FwuMgr->ready_checkout(FWU_READY_PREPARE_1);
-        else
-            m_FwuMgr->ready_checkout(FWU_READY_PREPARE_2);
+
+        switch(this_case)
+        {
+            case 12:
+                m_FwuMgr->ready_checkout(FWU_READY_PREPARE_2);
+                break;
+            case 13:
+                m_FwuMgr->ready_checkout(FWU_READY_PREPARE_3);
+                break;
+            default:
+                m_FwuMgr->ready_checkout(FWU_READY_PREPARE_1);
+                break;
+        }
     }
 }
 

@@ -10,6 +10,7 @@
 typedef enum {
     FW_UPDATE_ERROR_CODE_SUCESS = 0,
     FW_UPDATE_ERROR_CODE_FIRMWARE_UPDATE_TO_DATE,
+    FW_UPDATE_ERROR_CODE_FIRMWARE_VERIFY_FAIL,
     FW_UPDATE_ERROR_CODE_TIMEOUT,
     FW_UPDATE_ERROR_CODE_NULL = 0xFFFFFFFF,
 } FW_UPDATE_ERROR_CODE_E;
@@ -70,6 +71,7 @@ class GW_Role_Mgr: public GW_Role_Basic
 public:
     uint32_t id;
     uint32_t evt_id;
+    uint32_t verify;
     uint32_t timeout;
     GW_Roles_code res;
     GW_Roles_code ack;

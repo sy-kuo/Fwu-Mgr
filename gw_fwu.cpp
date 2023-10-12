@@ -96,6 +96,10 @@ void GW_FwUpdate::checkout_parse(char * data, uint8_t & supv_index, uint8_t & sr
     parsed_prepare(&content, (char *)data, parsed_key, 2);
     infos.mgr.id = atoi(content);
 
+    parsed_key[1] = (char *)"verify";
+    parsed_prepare(&content, (char *)data, parsed_key, 2);
+    infos.mgr.verify = atoi(content);
+
     parsed_key[0] = (char *)"supv";
     parsed_key[1] = (char *)"id";
     parsed_prepare(&content, (char *)data, parsed_key, 2);
@@ -445,6 +449,19 @@ void GW_FwUpdate::verify(void)
             infos.mgr.status = FW_UPDATE_ERROR_CODE_SUCESS;
         }
     }
+
+    if(infos.mgr.status == FW_UPDATE_ERROR_CODE_SUCESS)
+    {
+        infos.mgr.status = FW_UPDATE_ERROR_CODE_FIRMWARE_VERIFY_FAIL;
+        if(infos.mgr.verify == 0)
+        {
+            infos.mgr.status = FW_UPDATE_ERROR_CODE_SUCESS;
+        }
+        else if(infos.mgr.verify == 1)
+        {
+        }
+    }
+
     evt_push(FW_UPDATE_ROLE_MANAGER, FW_UPDATE_EVENT_VERIFY_DONE, (void *)&infos.mgr);
 }
 

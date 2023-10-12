@@ -9,8 +9,9 @@
 #define DST1_TEST_VERSION    0x2222
 #define DST2_TEST_VERSION    0x2222
 
-#define FWU_READY_PREPARE_1             "{\"mgr\":{\"id\":123},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
-#define FWU_READY_PREPARE_2             "{\"mgr\":{\"id\":321},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":0}}"
+#define FWU_READY_PREPARE_1             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
+#define FWU_READY_PREPARE_2             "{\"mgr\":{\"id\":123,\"verify\":1},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
+#define FWU_READY_PREPARE_3             "{\"mgr\":{\"id\":321,\"verify\":1},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":0}}"
 
 extern uint32_t data_size;
 extern uint8_t src1_binary[], src2_binary[];
