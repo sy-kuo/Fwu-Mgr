@@ -20,6 +20,9 @@ void btn1_press(void)
             case 13:
                 m_FwuMgr->ready_checkout(FWU_READY_PREPARE_3);
                 break;
+            case 14:
+                m_FwuMgr->ready_checkout(FWU_READY_PREPARE_4);
+                break;
             default:
                 m_FwuMgr->ready_checkout(FWU_READY_PREPARE_1);
                 break;
