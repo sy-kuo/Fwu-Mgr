@@ -16,6 +16,29 @@ GW_FwUpdate * m_FwuMgr;
 const char * whos[] = {"None", "Mgr", "Supv", "Src", "Dst"};
 const char * evts[] = {"Idle", "Ready", "Checkouted", "Verified", "Prepared", "Copied", "Pasted", "Finished", "Report"};
 
+void printHex(uint8_t * data, uint32_t len)
+{
+#define ROW_HEX_COUNT 16
+    bool empty = false;
+    uint32_t from = 0;
+
+    while(!empty)
+    {
+        uint8_t i, buffer[ROW_HEX_COUNT*3 + 1] = {0};
+        for(i=0;i<ROW_HEX_COUNT;i++)
+        {
+            sprintf((char *)buffer + (i*3), "%02X ", data[from + i]);
+            if(from + i + 1 >= len)
+            {
+                empty = true;
+                break;
+            }
+        }
+        printf("%08X: %s \r\n", from, buffer);
+        from += i;
+    }
+}
+
 void json_token_info(Json& json, int index)
 {
     const char * valueStart = json.tokenAddress(index);
@@ -126,7 +149,7 @@ void GW_FwUpdate::checkout_parse(char * data, uint8_t & supv_index, uint8_t & sr
 
     parsed_key[1] = (char *)"to_min";
     parsed_prepare(&content, (char *)data, parsed_key, 2);
-    infos.src.timeout_max = atoi(content);
+    infos.src.timeout_min = atoi(content);
 
     parsed_key[0] = (char *)"dst";
     parsed_key[1] = (char *)"id";
@@ -142,7 +165,7 @@ void GW_FwUpdate::checkout_parse(char * data, uint8_t & supv_index, uint8_t & sr
 
     parsed_key[1] = (char *)"to_min";
     parsed_prepare(&content, (char *)data, parsed_key, 2);
-    infos.dst.timeout_max = atoi(content);
+    infos.dst.timeout_min = atoi(content);
 
     parsed_key[1] = (char *)"level";
     parsed_prepare(&content, (char *)data, parsed_key, 2);
@@ -160,8 +183,11 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         return;
     }
 
-    if(who < FW_UPDATE_ROLE_COUNT && event < FW_UPDATE_EVENT_COUNT)
-        printf("---> Who: %s, evt: %s \r\n", whos[who], evts[event]);
+    if(msg_who)
+    {
+        if(who < FW_UPDATE_ROLE_COUNT && event < FW_UPDATE_EVENT_COUNT)
+            printf("---> Who: %s, evt: %s \r\n", whos[who], evts[event]);
+    }
 
     switch(event)
     {
@@ -475,8 +501,7 @@ void GW_FwUpdate::role_list_set(uint8_t supv_index, uint8_t src_index, uint8_t d
     who_is(dst, FW_UPDATE_ROLE_DESTINATION);
 }
 
-template <class Role>
-void GW_FwUpdate::role_register(Role * role, int id, FW_UPDATE_ROLE_E who)
+void GW_FwUpdate::role_register(GW_FwuMethod * role, int id, FW_UPDATE_ROLE_E who)
 {
     GW_FwuMethod * p_role = role;
     p_role->module_id = id;
@@ -491,20 +516,17 @@ void GW_FwUpdate::role_register(Role * role, int id, FW_UPDATE_ROLE_E who)
     reply_set(p_role);
 }
 
-template <class Role>
-void GW_FwUpdate::supv_register(Role * role, int id)
+void GW_FwUpdate::supv_register(GW_FwuMethod * role, int id)
 {
     role_register(role, id, FW_UPDATE_ROLE_SUPERVISOR);
 }
 
-template <class Role>
-void GW_FwUpdate::src_register(Role * role, int id)
+void GW_FwUpdate::src_register(GW_FwuMethod * role, int id)
 {
     role_register(role, id, FW_UPDATE_ROLE_SOURCE);
 }
 
-template <class Role>
-void GW_FwUpdate::dst_register(Role * role, int id)
+void GW_FwUpdate::dst_register(GW_FwuMethod * role, int id)
 {
     role_register(role, id, FW_UPDATE_ROLE_DESTINATION);
 }
@@ -521,6 +543,10 @@ void GW_FwUpdate::reply_set(Role * role)
     role->f_reply = std::bind(&GW_FwUpdate::evt_push, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 }
 
+void GW_FwUpdate::test(void)
+{
+}
+
 void gw_fwu_init()
 {
     m_FwuMgr = new GW_FwUpdate();
@@ -529,7 +555,8 @@ void gw_fwu_init()
     m_FwuMgr->supv_register(&supv_2, 12);
     m_FwuMgr->src_register(&src_1, 21);
     m_FwuMgr->src_register(&src_2, 22);
-    m_FwuMgr->dst_register(&dst_1, 31);
+    //m_FwuMgr->dst_register(&dst_1, 31);
+
     m_FwuMgr->dst_register(&dst_2, 32);
 
     printf("Start .... \r\n");

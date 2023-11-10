@@ -2,6 +2,7 @@
 #include "gw_fwu_test.h"
 #include <sstream>
 
+#include "gw_flash_iap.h"
 #include "gw_test_button.h"
 
 static BufferedSerial serial_port(USBTX, USBRX, 115200);
@@ -12,36 +13,9 @@ FileHandle *mbed::mbed_override_console(int fd)
 
 int main()
 {
+    printf("Initialzie FlashIAP\r\n");
+
     gw_fwu_init();
     gw_test_button_init();
+    gw_flash_iap_init();
 }
-/*
-#include <functional>
-#include <iostream>
-#include <string>
-
-class Work {
-public:
-    std::function<void(char * msg)> logger;
-    void do_sth()
-    {
-        logger("on log");
-    }
-};
-
-class P {
-public:
-    void log(char * msg)
-    {
-        printf("Log: %s \r\n", msg);
-    }
-};
-
-int main()
-{
-    printf("Main \r\n");
-    Work w;
-    P p;
-    w.logger = std::bind(&P::log, p, std::placeholders::_1);
-    w.do_sth();
-}*/

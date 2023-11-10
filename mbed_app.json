@@ -1,0 +1,14 @@
+{
+    "macros": [
+    ],
+    "config": {
+        "estimated-application-size": {
+            "required": true
+        }
+    },
+    "target_overrides": {
+        "*": {
+            "app.estimated-application-size": "0x80000"
+        }
+    }
+}

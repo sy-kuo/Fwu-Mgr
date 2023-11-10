@@ -7,6 +7,8 @@
 #define YES  1
 #define NO   0
 
+void printHex(uint8_t * data, uint32_t len);
+
 typedef enum {
     FW_UPDATE_ERROR_CODE_SUCESS = 0,
     FW_UPDATE_ERROR_CODE_FIRMWARE_UPDATE_TO_DATE,
@@ -172,25 +174,25 @@ private:
 class GW_FwUpdate
 {
 public:
-    GW_FwUpdate()
+    GW_FwUpdate(bool _msg_who = false)
     {
         thd.start(callback(&evt_queue, &EventQueue::dispatch_forever));
+        msg_who = _msg_who;
     }
 
     void ready_checkout(char * data);
 
     void evt_push(int who, int event, void * data);
 
-    template <class Role>
-    void supv_register(Role * role, int id);
+    void supv_register(GW_FwuMethod * role, int id);
 
-    template <class Role>
-    void src_register(Role * role, int id);
+    void src_register(GW_FwuMethod * role, int id);
 
-    template <class Role>
-    void dst_register(Role * role, int id);
+    void dst_register(GW_FwuMethod * role, int id);
 
+    void test(void);
 private:
+    bool msg_who;
     GW_FwuMethod * supv;
     GW_FwuMethod * src;
     GW_FwuMethod * dst;
@@ -207,8 +209,7 @@ private:
 
     void verify(void);
 
-    template <class Role>
-    void role_register(Role * role, int id, FW_UPDATE_ROLE_E who);
+    void role_register(GW_FwuMethod * role, int id, FW_UPDATE_ROLE_E who);
 
     template <class Role>
     void who_is(Role * role, FW_UPDATE_ROLE_E who);

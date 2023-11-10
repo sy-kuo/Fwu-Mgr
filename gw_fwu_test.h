@@ -9,7 +9,7 @@
 #define DST1_TEST_VERSION    0x2222
 #define DST2_TEST_VERSION    0x2222
 
-#define FWU_READY_PREPARE_1             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
+#define FWU_READY_PREPARE_1             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":20000,\"to_min\":500,\"level\":1}}"
 #define FWU_READY_PREPARE_2             "{\"mgr\":{\"id\":123,\"verify\":1},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
 #define FWU_READY_PREPARE_3             "{\"mgr\":{\"id\":321,\"verify\":1},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":0}}"
 #define FWU_READY_PREPARE_4             "{\"mgr\":{\"id\":234,\"verify\":0},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":32,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
@@ -28,8 +28,6 @@ int dst_prepare_status(void);
 int dst_paste_status(void);
 int dst_finish_status(void);
 int supv_report_status(void);
-
-void printHex(uint8_t * data, uint32_t len);
 
 class GW_Src_1: public GW_FwuMethod
 {
