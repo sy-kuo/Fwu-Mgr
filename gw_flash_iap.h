@@ -41,7 +41,7 @@ private:
     uint32_t len;
     uint32_t last_sector_size, start_address, erase_size, page_size;
     void * p_prepare;
-    void flash_clear(void);
+    int flash_clear(void);
     int flash_write(size_t offset, const unsigned char* buffer, size_t buffer_length);
     int flash_read(size_t offset, unsigned char * data, size_t data_length);
     void task_add(uint32_t id);

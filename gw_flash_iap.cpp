@@ -26,31 +26,40 @@ void GW_FlashIAP::tasks_run(void)
     }
     else if(task_id == FW_UPDATE_EVENT_PREPARED)
     {
-        GW_Role_Basic * p_params = (GW_Role_Basic *)p_prepare;
-
-        if(p_flash != NULL)
+        int res = flash_clear();
+        fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
+        if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
         {
-            free(p_flash);
-            p_flash = NULL;
+            GW_Role_Basic * p_params = (GW_Role_Basic *)p_prepare;
+
+            if(p_flash != NULL)
+            {
+                free(p_flash);
+                p_flash = NULL;
+            }
+            p_flash = (uint8_t *)calloc(p_params->length, 1);
+
+            if(p_flash != NULL)
+            {
+                fwu_res.start_addr = 0;
+                fwu_res.length = p_params->length;
+                fwu_res.size = p_params->size;
+                printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
+            }
+            else
+                fwu_res.status = FW_UPDATE_ERROR_CODE_NO_MEMORY;
         }
-        p_flash = (uint8_t *)calloc(p_params->length, 1);
-
-        flash_clear();
-
-        fwu_res.start_addr = 0;
-        fwu_res.length = p_params->length;
-        fwu_res.size = p_params->size;
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-
-        printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
     }
     else if(task_id == FW_UPDATE_EVENT_PASTE_DONE)
     {
-        printHex(p_flash, fwu_res.length);
-        printf("<--- %s paste! Addr: %X, Len: %d\r\n", class_id, fwu_res.start_addr, fwu_res.length);
-        flash_write(fwu_res.start_addr, p_flash, fwu_res.length);
-        fwu_res.start_addr += fwu_res.length;
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+        int res = flash_write(fwu_res.start_addr, p_flash, fwu_res.length);
+        fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
+        if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
+        {
+            fwu_res.start_addr += fwu_res.length;
+            printHex(p_flash, fwu_res.length);
+            printf("<--- %s paste! Addr: %X, Len: %d\r\n", class_id, fwu_res.start_addr - fwu_res.length, fwu_res.length);
+        }
     }
     else if(task_id == FW_UPDATE_EVENT_FINISH_DONE)
     {
@@ -92,9 +101,9 @@ int GW_FlashIAP::finish(void)
     return 0;
 }
 
-void GW_FlashIAP::flash_clear(void)
+int GW_FlashIAP::flash_clear(void)
 {
-    erase(start_address, erase_size);
+    return erase(start_address, erase_size);
 }
 
 int GW_FlashIAP::flash_write(size_t offset, const unsigned char * buffer, size_t buffer_length)
