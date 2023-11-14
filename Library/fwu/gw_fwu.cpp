@@ -558,6 +558,4 @@ void gw_fwu_init()
     //m_FwuMgr->dst_register(&dst_1, 31);
 
     m_FwuMgr->dst_register(&dst_2, 32);
-
-    printf("Start .... \r\n");
 }
