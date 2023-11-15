@@ -226,6 +226,8 @@ private:
     void evt_cb(int who, int event, void * data);
 };
 
+int parsed_prepare(char ** parsed, char * p_prepare, char * key[], int index);
+
 void gw_fwu_init();
 
 extern const char * whos[], * evts[];

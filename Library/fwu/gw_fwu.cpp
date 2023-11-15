@@ -151,6 +151,10 @@ void GW_FwUpdate::checkout_parse(char * data, uint8_t & supv_index, uint8_t & sr
     parsed_prepare(&content, (char *)data, parsed_key, 2);
     infos.src.timeout_min = atoi(content);
 
+    parsed_key[1] = (char *)"params";
+    parsed_prepare(&content, (char *)data, parsed_key, 2);
+    infos.src.pdata = content;
+
     parsed_key[0] = (char *)"dst";
     parsed_key[1] = (char *)"id";
     parsed_prepare(&content, (char *)data, parsed_key, 2);
@@ -197,16 +201,15 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
             GW_Role_Basic * p_ready = (GW_Role_Basic *)data;
             infos.mgr.ack.supv = p_ready->status;
             infos.mgr.res.supv = p_ready->status;
-            printf("Ready data: %s \r\n", (char *)p_ready->pdata);
             checkout_parse((char *)p_ready->pdata, supv_index, src_index, dst_index);
             role_list_set(supv_index, src_index, dst_index);
             if(infos.mgr.ack.supv != FW_UPDATE_ERROR_CODE_NULL)
             {
                 infos.mgr.ack.src = FW_UPDATE_ERROR_CODE_NULL;
-                src->checkout(&infos.mgr, infos.src.timeout_max);
+                src->checkout(infos.src.pdata, infos.src.timeout_max);
 
                 infos.mgr.ack.dst = FW_UPDATE_ERROR_CODE_NULL;
-                dst->checkout(&infos.mgr, infos.dst.timeout_max);
+                dst->checkout(infos.dst.pdata, infos.dst.timeout_max);
             }
             break;
         }
@@ -555,7 +558,6 @@ void gw_fwu_init()
     m_FwuMgr->supv_register(&supv_2, 12);
     m_FwuMgr->src_register(&src_1, 21);
     m_FwuMgr->src_register(&src_2, 22);
-    //m_FwuMgr->dst_register(&dst_1, 31);
-
+    m_FwuMgr->dst_register(&dst_1, 31);
     m_FwuMgr->dst_register(&dst_2, 32);
 }

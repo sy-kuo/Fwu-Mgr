@@ -9,7 +9,8 @@
 #define DST1_TEST_VERSION    0x2222
 #define DST2_TEST_VERSION    0x2222
 
-#define FWU_READY_PREPARE_1             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":20000,\"to_min\":500,\"level\":1}}"
+//#define FWU_READY_PREPARE_1             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":20000,\"to_min\":500,\"level\":1}}"
+#define FWU_READY_PREPARE_1             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":23,\"params\":{\"url\":\"https://dev.internal.smartdock.apiolink.com:8000\",\"key\":\"56b5d239e1e969c21e33849ac632e67e\",\"id\":\"e8d930b6-6314-4f10-a099-6e893f3ce95b\"},\"to_max\":3000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
 #define FWU_READY_PREPARE_2             "{\"mgr\":{\"id\":123,\"verify\":1},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
 #define FWU_READY_PREPARE_3             "{\"mgr\":{\"id\":321,\"verify\":1},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":0}}"
 #define FWU_READY_PREPARE_4             "{\"mgr\":{\"id\":234,\"verify\":0},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":32,\"to_max\":1000,\"to_min\":500,\"level\":1}}"

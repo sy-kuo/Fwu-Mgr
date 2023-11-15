@@ -160,5 +160,5 @@ void gw_flash_iap_init(void)
     m_FlashIAP = new GW_FlashIAP(MBED_CONF_APP_ESTIMATED_APPLICATION_SIZE, MBED_CONF_APP_ESTIMATED_APPLICATION_SIZE);
     m_FlashIAP->params();
 
-    m_FwuMgr->dst_register(m_FlashIAP, 31);
+    m_FwuMgr->dst_register(m_FlashIAP, 33);
 }
