@@ -280,7 +280,7 @@ uint8_t src2_binary[] = {
 
 GW_Role_Basic src1_info = {.ver = SRC1_TEST_VERSION, .size = sizeof(src1_binary), .length = 80}, \
              src2_info = {.ver = SRC2_TEST_VERSION, .size = sizeof(src2_binary), .length = 80}, \
-             dst1_info = {.ver = DST1_TEST_VERSION, .length = 16}, \
+             dst1_info = {.ver = DST1_TEST_VERSION, .length = 64}, \
              dst2_info = {.ver = DST2_TEST_VERSION, .length = 32}, \
              supv1_info, supv2_info;
 

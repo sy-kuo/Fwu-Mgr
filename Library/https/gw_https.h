@@ -8,7 +8,7 @@
 #include "gw_fwu.h"
 
 #define SRC_HTTPS_VERSION       0x1111
-#define SRC_HTTPS_MAX_LENGTH    0x40
+#define SRC_HTTPS_MAX_LENGTH    0x2000
 
 #define REST_API_INFO                       "/docks?bleMeshProfile.deviceKey="
 #define REST_API_MQTT_INFO                  "/rpc/mqttinfo"
