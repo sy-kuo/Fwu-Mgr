@@ -57,8 +57,8 @@ void GW_FlashIAP::tasks_run(void)
         if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
         {
             fwu_res.start_addr += fwu_res.length;
-            printHex(p_flash, fwu_res.length);
-            printf("<--- %s paste! Addr: %X, Len: %d\r\n", class_id, fwu_res.start_addr - fwu_res.length, fwu_res.length);
+            //printHex(p_flash, fwu_res.length);
+            //printf("<--- %s paste! Addr: %X, Len: %d\r\n", class_id, fwu_res.start_addr - fwu_res.length, fwu_res.length);
         }
     }
     else if(task_id == FW_UPDATE_EVENT_FINISH_DONE)

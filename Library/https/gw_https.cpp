@@ -92,7 +92,8 @@ void GW_RestApi::tasks_run(void)
         if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
         {
             fwu_res.pdata = body->buffer;
-            printf("<--- %s copy! %s \r\n", class_id, bytes_range->buffer);
+            printf("%s \r\n", bytes_range->buffer);
+            //printf("<--- %s copy! %s \r\n", class_id, bytes_range->buffer);
         }
     }
     else if(task_id == FW_UPDATE_EVENT_FINISH_DONE)

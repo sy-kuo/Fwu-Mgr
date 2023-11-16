@@ -2,7 +2,7 @@
 #include "gw_fwu.h"
 
 #define FLASH_IAP_VERSION       0x2222
-#define FLASH_IAP_MAX_LENGTH    0x40
+#define FLASH_IAP_MAX_LENGTH    0x2000
 
 class GW_FlashIAP: public FlashIAP, public GW_FwuMethod
 {
