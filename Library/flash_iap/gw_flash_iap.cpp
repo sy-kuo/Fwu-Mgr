@@ -30,7 +30,7 @@ void GW_FlashIAP::tasks_run(void)
         fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
         if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
         {
-            GW_Role_Basic * p_params = (GW_Role_Basic *)p_prepare;
+            GW_Role_Basic * p_params = (GW_Role_Basic *)this->p_params;
 
             if(p_flash != NULL)
             {
@@ -82,7 +82,7 @@ int GW_FlashIAP::checkout(void * params)
 
 int GW_FlashIAP::prepare(void * params)
 {
-    p_prepare = params;
+    p_params = params;
     task_add(FW_UPDATE_EVENT_PREPARED);
     return 0;
 }

@@ -10,6 +10,12 @@
 void printHex(uint8_t * data, uint32_t len);
 
 typedef enum {
+    FW_ROLE_ID_DEBUG_SUPV = 0x0001,
+    FW_ROLE_ID_DEBUG_SRC = 0x0001,
+    FW_ROLE_ID_DEBUG_DST = 0x0001,
+} FW_ROLE_ID_E;
+
+typedef enum {
     FW_UPDATE_ERROR_CODE_SUCESS = 0,
     FW_UPDATE_ERROR_CODE_FIRMWARE_UPDATE_TO_DATE,
     FW_UPDATE_ERROR_CODE_FIRMWARE_VERIFY_FAIL,

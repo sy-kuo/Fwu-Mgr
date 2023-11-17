@@ -553,11 +553,4 @@ void GW_FwUpdate::test(void)
 void gw_fwu_init()
 {
     m_FwuMgr = new GW_FwUpdate();
-
-    m_FwuMgr->supv_register(&supv_1, 11);
-    m_FwuMgr->supv_register(&supv_2, 12);
-    m_FwuMgr->src_register(&src_1, 21);
-    m_FwuMgr->src_register(&src_2, 22);
-    m_FwuMgr->dst_register(&dst_1, 31);
-    m_FwuMgr->dst_register(&dst_2, 32);
 }
