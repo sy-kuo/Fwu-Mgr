@@ -14,7 +14,6 @@ class GW_Src_Debug: public GW_FwuMethod
 public:
     GW_Src_Debug(const char * id): class_id((char *)id)
     {
-        thd = NULL;
     }
     ~GW_Src_Debug()
     {
@@ -25,15 +24,8 @@ public:
     virtual int finish(void) override;
     void source_add(uint8_t * p_src, uint32_t size);
     char * class_id;
-    void * p_params;
-    uint8_t * p_bytes;
-    uint8_t task_id;
-    uint32_t file_addr, file_len, content_size;
-    Thread * thd;
     GW_Role_Basic fwu_res;
-    
-    void task_add(uint32_t id);
-    void tasks_run(void);
+    uint8_t * p_bytes;
 };
 
 class GW_Dst_Debug: public GW_FwuMethod
@@ -41,8 +33,6 @@ class GW_Dst_Debug: public GW_FwuMethod
 public:
     GW_Dst_Debug(const char * id): class_id((char *)id)
     {
-        thd = NULL;
-        p_bytes = NULL;
     }
     ~GW_Dst_Debug()
     {
@@ -52,13 +42,7 @@ public:
     virtual int paste(uint8_t * data, uint32_t length) override;
     virtual int finish(void) override;
     char * class_id;
-    void * p_params;
-    uint8_t * p_bytes, task_id;
-    Thread * thd;
     GW_Role_Basic fwu_res;
-
-    void task_add(uint32_t id);
-    void tasks_run(void);
 };
 
 class GW_Supv_Debug: public GW_FwuMethod
@@ -66,19 +50,13 @@ class GW_Supv_Debug: public GW_FwuMethod
 public:
     GW_Supv_Debug(const char * id): class_id((char *)id)
     {
-        thd = NULL;
     }
     ~GW_Supv_Debug()
     {
     }
     virtual int report(void * params) override;
     char * class_id;
-    void * p_params;
-    uint8_t task_id;
-    Thread * thd;
     GW_Role_Basic fwu_res;
-    void task_add(uint32_t id);
-    void tasks_run(void);
 };
 
 extern GW_Supv_Debug * supv_debug;

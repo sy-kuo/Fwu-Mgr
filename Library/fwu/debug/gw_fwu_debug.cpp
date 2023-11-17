@@ -289,167 +289,94 @@ void GW_Src_Debug::source_add(uint8_t * p_src, uint32_t size)
     fwu_res.size = size;
 }
 
-void GW_Src_Debug::task_add(uint32_t id)
-{
-    task_id = id;
-
-    if(thd != NULL)
-        delete thd;
-    thd = new Thread;
-    thd->start(callback(this, &GW_Src_Debug::tasks_run));
-}
-
-void GW_Src_Debug::tasks_run(void)
-{
-    if(task_id == FW_UPDATE_EVENT_CHECKOUTED)
-    {
-        fwu_res.ver = SRC1_TEST_VERSION;
-        fwu_res.length = 80;
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-        printf("<--- %s checkout!\r\n", class_id);
-    }
-    else if(task_id == FW_UPDATE_EVENT_PREPARED)
-    {
-        GW_Role_Basic * p_params = (GW_Role_Basic *)this->p_params;
-        fwu_res.length = p_params->length;
-        fwu_res.size = p_params->size;
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-        printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
-    }
-    else if(task_id == FW_UPDATE_EVENT_COPY_DONE)
-    {
-        printf("<--- %s copy! Addr: %X, Len: %d \r\n", class_id, file_addr, file_len);
-        fwu_res.pdata = p_bytes + file_addr;
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    }
-    else if(task_id == FW_UPDATE_EVENT_FINISH_DONE)
-    {
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    }
-    reply(task_id, (void *)&fwu_res);
-}
-
 int GW_Src_Debug::checkout(void * params)
 {
-    p_params = params;
-    task_add(FW_UPDATE_EVENT_CHECKOUTED);
+    fwu_res.ver = SRC1_TEST_VERSION;
+    fwu_res.length = 80;
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    printf("<--- %s checkout!\r\n", class_id);
+    reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)&fwu_res);
     return 0;
 }
 
 int GW_Src_Debug::prepare(void * params)
 {
-    p_params = params;
-    task_add(FW_UPDATE_EVENT_PREPARED);
+    GW_Role_Basic * p_params = (GW_Role_Basic *)params;
+    fwu_res.length = p_params->length;
+    fwu_res.size = p_params->size;
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
+    reply(FW_UPDATE_EVENT_PREPARED, (void *)&fwu_res);
     return 0;
 }
 
 int GW_Src_Debug::copy(uint32_t start_addr, uint32_t length)
 {
-    file_addr = start_addr;
-    file_len = length;
-    task_add(FW_UPDATE_EVENT_COPY_DONE);
+    fwu_res.pdata = p_bytes + start_addr;
+    fwu_res.length = length;
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    printf("<--- %s copy! Addr: %X, Len: %d \r\n", class_id, start_addr, length);
+    reply(FW_UPDATE_EVENT_COPY_DONE, (void *)&fwu_res);
     return 0;
 }
 
 int GW_Src_Debug::finish(void)
 {
-    task_add(FW_UPDATE_EVENT_FINISH_DONE);
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    printf("<--- %s finish!\r\n", class_id);
+    reply(FW_UPDATE_EVENT_FINISH_DONE, (void *)&fwu_res);
     return 0;
-}
-
-void GW_Dst_Debug::task_add(uint32_t id)
-{
-    task_id = id;
-
-    if(thd != NULL)
-        delete thd;
-    thd = new Thread;
-    thd->start(callback(this, &GW_Dst_Debug::tasks_run));
-}
-
-void GW_Dst_Debug::tasks_run(void)
-{
-    if(task_id == FW_UPDATE_EVENT_CHECKOUTED)
-    {
-        fwu_res.ver = DST1_TEST_VERSION;
-        fwu_res.length = 64;
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-        printf("<--- %s checkout!\r\n", class_id);
-    }
-    else if(task_id == FW_UPDATE_EVENT_PREPARED)
-    {
-        GW_Role_Basic * p_params = (GW_Role_Basic *)this->p_params;
-        fwu_res.start_addr = 0;
-        fwu_res.length = p_params->length;
-        fwu_res.size = p_params->size;
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-        printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
-    }
-    else if(task_id == FW_UPDATE_EVENT_PASTE_DONE)
-    {
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-        fwu_res.start_addr += fwu_res.length;
-        printHex(p_bytes, fwu_res.length);
-        printf("<--- %s paste! Addr: %X, Len: %d\r\n", class_id, fwu_res.start_addr - fwu_res.length, fwu_res.length);
-    }
-    else if(task_id == FW_UPDATE_EVENT_FINISH_DONE)
-    {
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    }
-    reply(task_id, (void *)&fwu_res);
 }
 
 int GW_Dst_Debug::checkout(void * params)
 {
-    task_add(FW_UPDATE_EVENT_CHECKOUTED);
+    fwu_res.ver = DST1_TEST_VERSION;
+    fwu_res.length = 64;
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    ThisThread::sleep_for(10ms);
+    printf("<--- %s checkout!\r\n", class_id);
+    reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)&fwu_res);
     return 0;
 }
 
 int GW_Dst_Debug::prepare(void * params)
 {
-    p_params = params;
-    task_add(FW_UPDATE_EVENT_PREPARED);
+    GW_Role_Basic * p_params = (GW_Role_Basic *)params;
+    fwu_res.start_addr = 0;
+    fwu_res.length = p_params->length;
+    fwu_res.size = p_params->size;
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    ThisThread::sleep_for(10ms);
+    printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
+    reply(FW_UPDATE_EVENT_PREPARED, (void *)&fwu_res);
     return 0;
 }
 
 int GW_Dst_Debug::paste(uint8_t * data, uint32_t length)
 {
-    p_bytes = data;
-    task_add(FW_UPDATE_EVENT_PASTE_DONE);
+    fwu_res.start_addr += fwu_res.length;
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    printHex(data, fwu_res.length);
+    printf("<--- %s paste! Addr: %X, Len: %d\r\n", class_id, fwu_res.start_addr - fwu_res.length, fwu_res.length);
+    reply(FW_UPDATE_EVENT_PASTE_DONE, (void *)&fwu_res);
     return 0;
 }
 
 int GW_Dst_Debug::finish(void)
 {
-    task_add(FW_UPDATE_EVENT_FINISH_DONE);
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    ThisThread::sleep_for(10ms);
+    printf("<--- %s finish!\r\n", class_id);
+    reply(FW_UPDATE_EVENT_FINISH_DONE, (void *)&fwu_res);
     return 0;
-}
-
-void GW_Supv_Debug::task_add(uint32_t id)
-{
-    task_id = id;
-
-    if(thd != NULL)
-        delete thd;
-    thd = new Thread;
-    thd->start(callback(this, &GW_Supv_Debug::tasks_run));
-}
-
-void GW_Supv_Debug::tasks_run(void)
-{
-    if(task_id == FW_UPDATE_EVENT_REPORT_DONE)
-    {
-        GW_Role_Mgr * p_params = (GW_Role_Mgr *)this->p_params;
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-        printf("<--- %s report! Id: %d Evt: %s! Status code mgr: %d supv: %d src: %d dst: %d \r\n", class_id, p_params->id, evts[p_params->evt_id], p_params->res.mgr, p_params->res.supv, p_params->res.src, p_params->res.dst);
-    }
-    reply(task_id, (void *)&fwu_res);
 }
 
 int GW_Supv_Debug::report(void * params)
 {
-    p_params = params;
-    task_add(FW_UPDATE_EVENT_REPORT_DONE);
+    GW_Role_Mgr * p_params = (GW_Role_Mgr *)params;
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    printf("<--- %s report! Id: %d Evt: %s! Status code mgr: %d supv: %d src: %d dst: %d \r\n", class_id, p_params->id, evts[p_params->evt_id], p_params->res.mgr, p_params->res.supv, p_params->res.src, p_params->res.dst);
+    reply(FW_UPDATE_EVENT_REPORT_DONE, (void *)&fwu_res);
     return 0;
 }
 

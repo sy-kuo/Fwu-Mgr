@@ -300,7 +300,6 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
                 if(infos.mgr.ack.src == FW_UPDATE_ERROR_CODE_SUCESS && infos.mgr.ack.dst == FW_UPDATE_ERROR_CODE_SUCESS)
                 {
                     infos.mgr.ack.src = FW_UPDATE_ERROR_CODE_NULL;
-
                     infos.mgr.start_addr = infos.mgr.start_addr;
                     src->copy(infos.mgr.start_addr, infos.mgr.length, infos.src.timeout_max);
                 }
@@ -552,5 +551,5 @@ void GW_FwUpdate::test(void)
 
 void gw_fwu_init()
 {
-    m_FwuMgr = new GW_FwUpdate();
+    m_FwuMgr = new GW_FwUpdate(true);
 }

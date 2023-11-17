@@ -96,6 +96,11 @@ private:
     std::function<void(int who, int event, void * data)> f_reply;
     Timeout tmr;
     GW_Role_Basic tmp;
+    Thread * thd = NULL;
+    void * p_params;
+    uint8_t task_id;
+    uint8_t * _pdata;
+    uint32_t _address, _length;
 
     int checkout(void * params, uint32_t timeout_ms);
     int prepare(void * params, uint32_t timeout_ms);
@@ -106,6 +111,9 @@ private:
     void timeout_activate(uint32_t timeout_ms);
     void timeout_inactivate(void);
     void timeout(void);
+    
+    void task_add(uint32_t id, uint32_t timeout_ms);
+    void tasks_run(void);
 };
 
 #endif
