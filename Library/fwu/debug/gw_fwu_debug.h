@@ -23,11 +23,11 @@ public:
     virtual int prepare(void * params) override;
     virtual int copy(uint32_t start_addr, uint32_t length) override;
     virtual int finish(void) override;
-    void binary_add(uint8_t * p_binary, uint32_t size);
+    void source_add(uint8_t * p_src, uint32_t size);
     char * class_id;
     void * p_params;
-    uint8_t * binary;
-    uint8_t * p_flash, task_id;
+    uint8_t * p_bytes;
+    uint8_t task_id;
     uint32_t file_addr, file_len, content_size;
     Thread * thd;
     GW_Role_Basic fwu_res;
@@ -42,7 +42,7 @@ public:
     GW_Dst_Debug(const char * id): class_id((char *)id)
     {
         thd = NULL;
-        p_flash = NULL;
+        p_bytes = NULL;
     }
     ~GW_Dst_Debug()
     {
@@ -53,7 +53,7 @@ public:
     virtual int finish(void) override;
     char * class_id;
     void * p_params;
-    uint8_t * p_flash, task_id;
+    uint8_t * p_bytes, task_id;
     Thread * thd;
     GW_Role_Basic fwu_res;
 

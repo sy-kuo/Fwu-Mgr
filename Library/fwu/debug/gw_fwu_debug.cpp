@@ -282,9 +282,9 @@ GW_Supv_Debug * supv_debug;
 GW_Src_Debug * src_debug;
 GW_Dst_Debug * dst_debug;
 
-void GW_Src_Debug::binary_add(uint8_t * p_binary, uint32_t size)
+void GW_Src_Debug::source_add(uint8_t * p_src, uint32_t size)
 {
-    binary = p_binary;
+    p_bytes = p_src;
     fwu_res.size = size;
 }
 
@@ -318,7 +318,7 @@ void GW_Src_Debug::tasks_run(void)
     else if(task_id == FW_UPDATE_EVENT_COPY_DONE)
     {
         printf("<--- %s copy! Addr: %X, Len: %d \r\n", class_id, file_addr, file_len);
-        fwu_res.pdata = binary + file_addr;
+        fwu_res.pdata = p_bytes + file_addr;
         fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
     }
     else if(task_id == FW_UPDATE_EVENT_FINISH_DONE)
@@ -377,27 +377,18 @@ void GW_Dst_Debug::tasks_run(void)
     }
     else if(task_id == FW_UPDATE_EVENT_PREPARED)
     {
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-
         GW_Role_Basic * p_params = (GW_Role_Basic *)this->p_params;
-
-        if(p_flash != NULL)
-        {
-            free(p_flash);
-            p_flash = NULL;
-        }
-        p_flash = (uint8_t *)calloc(p_params->length, 1);
-
         fwu_res.start_addr = 0;
         fwu_res.length = p_params->length;
         fwu_res.size = p_params->size;
+        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
         printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
     }
     else if(task_id == FW_UPDATE_EVENT_PASTE_DONE)
     {
         fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
         fwu_res.start_addr += fwu_res.length;
-        printHex(p_flash, fwu_res.length);
+        printHex(p_bytes, fwu_res.length);
         printf("<--- %s paste! Addr: %X, Len: %d\r\n", class_id, fwu_res.start_addr - fwu_res.length, fwu_res.length);
     }
     else if(task_id == FW_UPDATE_EVENT_FINISH_DONE)
@@ -422,8 +413,7 @@ int GW_Dst_Debug::prepare(void * params)
 
 int GW_Dst_Debug::paste(uint8_t * data, uint32_t length)
 {
-    memset(p_flash, 0, length);
-    memcpy(p_flash, data, length);
+    p_bytes = data;
     task_add(FW_UPDATE_EVENT_PASTE_DONE);
     return 0;
 }
@@ -468,7 +458,7 @@ void gw_fwu_debug_init(void)
     src_debug = new GW_Src_Debug("Dbg-Src");
     dst_debug = new GW_Dst_Debug("Dbg-Dst");
 
-    src_debug->binary_add(src_debug_binary2, sizeof(src_debug_binary2));
+    src_debug->source_add(src_debug_binary2, sizeof(src_debug_binary2));
 
     m_FwuMgr->supv_register(supv_debug, FW_ROLE_ID_DEBUG_SUPV);
     m_FwuMgr->src_register(src_debug, FW_ROLE_ID_DEBUG_SRC);
