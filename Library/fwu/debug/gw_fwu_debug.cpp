@@ -1,3 +1,4 @@
+#include "gw_fwu.h"
 #include "gw_fwu_debug.h"
 
 uint8_t src_debug_binary1[] = {

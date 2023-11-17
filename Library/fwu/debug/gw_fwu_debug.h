@@ -2,7 +2,7 @@
 #define __GW_FWU_DEBUG_H__
 
 #include "mbed.h"
-#include "gw_fwu.h"
+#include "gw_fwu_base.h"
 
 #define SRC1_TEST_VERSION    0x1111
 #define SRC2_TEST_VERSION    0x1111

@@ -30,7 +30,7 @@ FileHandle *mbed::mbed_override_console(int fd)
 EthernetInterface m_Network;
 int main()
 {
-    printf("Https & FlashIAP test 1\r\n");
+    printf("Https & FlashIAP test!\r\n");
 
     GW_RestApi_params https_params = {
         .network = &m_Network

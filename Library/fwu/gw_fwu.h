@@ -3,12 +3,14 @@
 
 #include <vector>
 #include "mbed.h"
+#include "gw_fwu_base.h"
 
 #define YES  1
 #define NO   0
 
 void printHex(uint8_t * data, uint32_t len);
 
+/*
 typedef enum {
     FW_ROLE_ID_DEBUG_SUPV = 0x0001,
     FW_ROLE_ID_DEBUG_SRC = 0x0001,
@@ -46,12 +48,14 @@ typedef enum {
     FW_UPDATE_EVENT_COUNT,
     FW_UPDATE_EVENT_NEXT_TEST
 } FW_UPDATE_EVENT_E;
+*/
 
 typedef enum {
     FW_UPDATE_VERSION_LEVEL_NORMAL,
     FW_UPDATE_VERSION_LEVEL_FORCE
 } FW_UPDATE_VERSION_LEVEL_E;
 
+/*
 class GW_Roles_Code
 {
 public:
@@ -85,6 +89,7 @@ public:
     GW_Roles_Code res;
     GW_Roles_Code ack;
 };
+*/
 
 class GW_Params
 {
@@ -94,6 +99,7 @@ public:
     GW_Role_Mgr mgr;
 };
 
+/*
 class GW_FwuMethod
 {
 public:
@@ -177,7 +183,7 @@ private:
         f_reply(who, evt, &tmp);
     }
 };
-
+*/
 class GW_FwUpdate
 {
 public:
