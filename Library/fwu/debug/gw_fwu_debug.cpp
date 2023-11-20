@@ -333,7 +333,6 @@ int GW_Dst_Debug::checkout(void * params)
     fwu_res.ver = DST1_TEST_VERSION;
     fwu_res.length = 64;
     fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    ThisThread::sleep_for(10ms);
     printf("<--- %s checkout!\r\n", class_id);
     reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)&fwu_res);
     return 0;
@@ -346,7 +345,6 @@ int GW_Dst_Debug::prepare(void * params)
     fwu_res.length = p_params->length;
     fwu_res.size = p_params->size;
     fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    ThisThread::sleep_for(10ms);
     printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
     reply(FW_UPDATE_EVENT_PREPARED, (void *)&fwu_res);
     return 0;
@@ -365,7 +363,6 @@ int GW_Dst_Debug::paste(uint8_t * data, uint32_t length)
 int GW_Dst_Debug::finish(void)
 {
     fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    ThisThread::sleep_for(10ms);
     printf("<--- %s finish!\r\n", class_id);
     reply(FW_UPDATE_EVENT_FINISH_DONE, (void *)&fwu_res);
     return 0;

@@ -11,6 +11,8 @@
 #define TRACE_GROUP     "FWU"
 #endif
 
+#define FWU_MANAGER_RESPONSE_DURATION_MS      100
+
 GW_FwUpdate * m_FwuMgr;
 
 const char * whos[] = {"None", "Mgr", "Supv", "Src", "Dst"};
@@ -215,6 +217,13 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         }
         case FW_UPDATE_EVENT_CHECKOUTED:
         {
+            if(who == FW_UPDATE_ROLE_MANAGER)
+            {
+                infos.mgr.ack.mgr = FW_UPDATE_ERROR_CODE_NULL;
+                verify();
+                break;
+            }
+
             GW_Role_Basic * p_checkout = (GW_Role_Basic *)data;
             if(who == FW_UPDATE_ROLE_SOURCE)
             {
@@ -236,8 +245,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
             {
                 if(infos.mgr.ack.src == FW_UPDATE_ERROR_CODE_SUCESS && infos.mgr.ack.dst == FW_UPDATE_ERROR_CODE_SUCESS)
                 {
-                    infos.mgr.ack.mgr = FW_UPDATE_ERROR_CODE_NULL;
-                    verify();
+                    evt_push_ms(FW_UPDATE_ROLE_MANAGER, FW_UPDATE_EVENT_CHECKOUTED, NULL, FWU_MANAGER_RESPONSE_DURATION_MS);
                 }
                 else
                 {
@@ -283,6 +291,14 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         }
         case FW_UPDATE_EVENT_PREPARED:
         {
+            if(who == FW_UPDATE_ROLE_MANAGER)
+            {
+                infos.mgr.ack.src = FW_UPDATE_ERROR_CODE_NULL;
+                infos.mgr.start_addr = infos.mgr.start_addr;
+                src->copy(infos.mgr.start_addr, infos.mgr.length, infos.src.timeout_max);
+                break;
+            }
+
             GW_Role_Basic * p_prepare = (GW_Role_Basic *)data;
             if(who == FW_UPDATE_ROLE_SOURCE)
             {
@@ -299,9 +315,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
             {
                 if(infos.mgr.ack.src == FW_UPDATE_ERROR_CODE_SUCESS && infos.mgr.ack.dst == FW_UPDATE_ERROR_CODE_SUCESS)
                 {
-                    infos.mgr.ack.src = FW_UPDATE_ERROR_CODE_NULL;
-                    infos.mgr.start_addr = infos.mgr.start_addr;
-                    src->copy(infos.mgr.start_addr, infos.mgr.length, infos.src.timeout_max);
+                    evt_push_ms(FW_UPDATE_ROLE_MANAGER, FW_UPDATE_EVENT_PREPARED, NULL, FWU_MANAGER_RESPONSE_DURATION_MS);
                 }
                 else
                 {
@@ -458,6 +472,12 @@ void GW_FwUpdate::ready_checkout(char * params)
 void GW_FwUpdate::evt_push(int who, int event, void * data)
 {
     evt(who, event, data);
+}
+
+void GW_FwUpdate::evt_push_ms(int who, int event, void * data, uint32_t delay_ms)
+{
+    auto ms = std::chrono::milliseconds(delay_ms);
+    evt_queue.call_in(ms, this, &GW_FwUpdate::evt_push, who, event, data);
 }
 
 void GW_FwUpdate::verify(void)

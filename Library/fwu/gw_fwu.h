@@ -36,6 +36,8 @@ public:
 
     void evt_push(int who, int event, void * data);
 
+    void evt_push_ms(int who, int event, void * data, uint32_t delay_ms);
+
     void supv_register(GW_FwuMethod * role, int id);
 
     void src_register(GW_FwuMethod * role, int id);
