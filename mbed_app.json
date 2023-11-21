@@ -8,8 +8,6 @@
     },
     "target_overrides": {
         "*": {
-            "target.mbed_app_start": "0x00008080",
-            "target.mbed_app_size": "0x78000",
             "app.estimated-application-size": "0x80000"
         }
     }
