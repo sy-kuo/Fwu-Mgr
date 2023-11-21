@@ -11,35 +11,12 @@
 #define TRACE_GROUP     "FWU"
 #endif
 
-#define FWU_MANAGER_RESPONSE_DURATION_MS      100
+#define FWU_MANAGER_RESPONSE_DURATION_MS      20
 
 GW_FwUpdate * m_FwuMgr;
 
 const char * whos[] = {"None", "Mgr", "Supv", "Src", "Dst"};
 const char * evts[] = {"Idle", "Ready", "Checkouted", "Verified", "Prepared", "Copied", "Pasted", "Finished", "Report"};
-
-void printHex(uint8_t * data, uint32_t len)
-{
-#define ROW_HEX_COUNT 16
-    bool empty = false;
-    uint32_t from = 0;
-
-    while(!empty)
-    {
-        uint8_t i, buffer[ROW_HEX_COUNT*3 + 1] = {0};
-        for(i=0;i<ROW_HEX_COUNT;i++)
-        {
-            sprintf((char *)buffer + (i*3), "%02X ", data[from + i]);
-            if(from + i + 1 >= len)
-            {
-                empty = true;
-                break;
-            }
-        }
-        printf("%08X: %s \r\n", from, buffer);
-        from += i;
-    }
-}
 
 void json_token_info(Json& json, int index)
 {
@@ -173,6 +150,10 @@ void GW_FwUpdate::checkout_parse(char * data, uint8_t & supv_index, uint8_t & sr
     parsed_prepare(&content, (char *)data, parsed_key, 2);
     infos.dst.timeout_min = atoi(content);
 
+    parsed_key[1] = (char *)"params";
+    parsed_prepare(&content, (char *)data, parsed_key, 2);
+    infos.dst.pdata = content;
+
     parsed_key[1] = (char *)"level";
     parsed_prepare(&content, (char *)data, parsed_key, 2);
     infos.dst.level = atoi(content);
@@ -200,7 +181,7 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
         case FW_UPDATE_EVENT_READY_CHECKOUT:
         {
             uint8_t supv_index, src_index, dst_index;
-            GW_Role_Basic * p_ready = (GW_Role_Basic *)data;
+            GW_Role_Mgr * p_ready = (GW_Role_Mgr *)data;
             infos.mgr.ack.supv = p_ready->status;
             infos.mgr.res.supv = p_ready->status;
             checkout_parse((char *)p_ready->pdata, supv_index, src_index, dst_index);
@@ -209,6 +190,8 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
             {
                 infos.mgr.ack.src = FW_UPDATE_ERROR_CODE_NULL;
                 src->checkout(infos.src.pdata, infos.src.timeout_max);
+
+                ThisThread::sleep_for(5ms);
 
                 infos.mgr.ack.dst = FW_UPDATE_ERROR_CODE_NULL;
                 dst->checkout(infos.dst.pdata, infos.dst.timeout_max);
@@ -277,6 +260,8 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
 
                     infos.mgr.ack.src = FW_UPDATE_ERROR_CODE_NULL;
                     src->prepare(&infos.mgr, infos.src.timeout_max);
+
+                    ThisThread::sleep_for(5ms);
 
                     infos.mgr.ack.dst = FW_UPDATE_ERROR_CODE_NULL;
                     dst->prepare(&infos.mgr, infos.dst.timeout_max);
@@ -368,6 +353,9 @@ void GW_FwUpdate::evt_cb(int who, int event, void * data)
                     {
                         infos.mgr.ack.src = FW_UPDATE_ERROR_CODE_NULL;
                         src->finish(infos.src.timeout_max);
+                        
+                        ThisThread::sleep_for(5ms);
+
                         infos.mgr.ack.dst = FW_UPDATE_ERROR_CODE_NULL;
                         dst->finish(infos.dst.timeout_max);
                     }
@@ -567,6 +555,9 @@ void GW_FwUpdate::reply_set(Role * role)
 
 void GW_FwUpdate::test(void)
 {
+printf("\r\n");
+printf("Ck %s == %s\r\n", (char *)infos.src.pdata, (char *)infos.dst.pdata);
+printf("\r\n");
 }
 
 void gw_fwu_init()

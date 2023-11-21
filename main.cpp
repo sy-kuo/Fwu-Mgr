@@ -13,9 +13,9 @@
 // Debug case
 #define FWU_READY_PREPARE_0             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":1,\"to\":2000},\"src\":{\"id\":1,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":1,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
 // 256 size buffer binary
-#define FWU_READY_PREPARE_1             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":23,\"params\":{\"url\":\"https://dev.internal.smartdock.apiolink.com:8000\",\"key\":\"56b5d239e1e969c21e33849ac632e67e\",\"id\":\"e8d930b6-6314-4f10-a099-6e893f3ce95b\"},\"to_max\":3000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":20000,\"to_min\":500,\"level\":1}}"
+#define FWU_READY_PREPARE_1             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":1,\"to\":2000},\"src\":{\"id\":23,\"params\":{\"url\":\"https://dev.internal.smartdock.apiolink.com:8000\",\"key\":\"56b5d239e1e969c21e33849ac632e67e\",\"id\":\"e8d930b6-6314-4f10-a099-6e893f3ce95b\"},\"to_max\":3000,\"to_min\":500},\"dst\":{\"id\":33,\"params\":\"This is test\",\"to_max\":20000,\"to_min\":500,\"level\":1}}"
 // Simple loop binary
-#define FWU_READY_PREPARE_2             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":23,\"params\":{\"url\":\"https://dev.internal.smartdock.apiolink.com:8000\",\"key\":\"56b5d239e1e969c21e33849ac632e67e\",\"id\":\"a7d2dcf2-f42e-4ff5-b153-d71761f02cfb\"},\"to_max\":3000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":20000,\"to_min\":500,\"level\":1}}"
+#define FWU_READY_PREPARE_2             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":1,\"to\":2000},\"src\":{\"id\":23,\"params\":{\"url\":\"https://dev.internal.smartdock.apiolink.com:8000\",\"key\":\"56b5d239e1e969c21e33849ac632e67e\",\"id\":\"a7d2dcf2-f42e-4ff5-b153-d71761f02cfb\"},\"to_max\":3000,\"to_min\":500},\"dst\":{\"id\":33,\"params\":\"This is test\",\"to_max\":20000,\"to_min\":500,\"level\":1}}"
 
 #define FWU_READY_PREPARE_3             "{\"mgr\":{\"id\":123,\"verify\":0},\"supv\":{\"id\":1,\"to\":2000},\"src\":{\"id\":1,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":1,\"to_max\":1000,\"to_min\":500,\"level\":1}}"
 #define FWU_READY_PREPARE_4             "{\"mgr\":{\"id\":321,\"verify\":1},\"supv\":{\"id\":11,\"to\":2000},\"src\":{\"id\":21,\"to_max\":1000,\"to_min\":500},\"dst\":{\"id\":31,\"to_max\":1000,\"to_min\":500,\"level\":0}}"
@@ -58,8 +58,10 @@ int main()
                 m_FwuMgr->ready_checkout((char *)FWU_READY_PREPARE_2);
             else if(buf[0] == '3')
                 m_FwuMgr->ready_checkout((char *)FWU_READY_PREPARE_3);
-            else
+            else if(buf[0] == '4')
                 m_FwuMgr->ready_checkout((char *)FWU_READY_PREPARE_4);
+            else if(buf[0] == 'r')
+                m_FwuMgr->test();
         }
     }
 }

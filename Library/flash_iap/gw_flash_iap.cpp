@@ -2,102 +2,51 @@
 
 GW_FlashIAP * m_FlashIAP;
 
-void GW_FlashIAP::task_add(uint32_t id)
-{
-    task_id = id;
-
-    if(thd != NULL)
-    {
-        delete thd;
-        thd = NULL;
-    }
-    thd = new Thread;
-    thd->start(callback(this, &GW_FlashIAP::tasks_run));
-}
-
-void GW_FlashIAP::tasks_run(void)
-{
-    if(task_id == FW_UPDATE_EVENT_CHECKOUTED)
-    {
-        fwu_res.ver = FLASH_IAP_VERSION;
-        fwu_res.length = FLASH_IAP_MAX_LENGTH;
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-        printf("<--- %s checkout!\r\n", class_id);
-    }
-    else if(task_id == FW_UPDATE_EVENT_PREPARED)
-    {
-        int res = flash_clear();
-        fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
-        if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
-        {
-            GW_Role_Basic * p_params = (GW_Role_Basic *)this->p_params;
-
-            if(p_flash != NULL)
-            {
-                free(p_flash);
-                p_flash = NULL;
-            }
-            p_flash = (uint8_t *)calloc(p_params->length, 1);
-
-            if(p_flash != NULL)
-            {
-                fwu_res.start_addr = 0;
-                fwu_res.length = p_params->length;
-                fwu_res.size = p_params->size;
-                printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
-            }
-            else
-                fwu_res.status = FW_UPDATE_ERROR_CODE_NO_MEMORY;
-        }
-    }
-    else if(task_id == FW_UPDATE_EVENT_PASTE_DONE)
-    {
-        int res = flash_write(fwu_res.start_addr, p_flash, fwu_res.length);
-        fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
-        if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
-        {
-            fwu_res.start_addr += fwu_res.length;
-            //printHex(p_flash, fwu_res.length);
-            //printf("<--- %s paste! Addr: %X, Len: %d\r\n", class_id, fwu_res.start_addr - fwu_res.length, fwu_res.length);
-        }
-    }
-    else if(task_id == FW_UPDATE_EVENT_FINISH_DONE)
-    {
-        if(p_flash != NULL)
-        {
-            free(p_flash);
-            p_flash = NULL;
-        }
-
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    }
-    reply(task_id, (void *)&fwu_res);
-}
-
 int GW_FlashIAP::checkout(void * params)
 {
-    task_add(FW_UPDATE_EVENT_CHECKOUTED);
+    printf("<--- %s checkout!\r\n", class_id);
+    fwu_res.ver = FLASH_IAP_VERSION;
+    fwu_res.length = FLASH_IAP_MAX_LENGTH;
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)&fwu_res);
     return 0;
 }
 
 int GW_FlashIAP::prepare(void * params)
 {
-    p_params = params;
-    task_add(FW_UPDATE_EVENT_PREPARED);
+    int res = flash_clear();
+    fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
+    if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
+    {
+        GW_Role_Basic * p_params = (GW_Role_Basic *)params;
+
+        fwu_res.start_addr = 0;
+        fwu_res.length = p_params->length;
+        fwu_res.size = p_params->size;
+        printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
+    }
+    reply(FW_UPDATE_EVENT_PREPARED, (void *)&fwu_res);
     return 0;
 }
 
 int GW_FlashIAP::paste(uint8_t * data, uint32_t length)
 {
-    memset(p_flash, 0, length);
-    memcpy(p_flash, data, length);
-    task_add(FW_UPDATE_EVENT_PASTE_DONE);
+    int res = flash_write(fwu_res.start_addr, data, length);
+    fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
+    if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
+    {
+        fwu_res.start_addr += length;
+        //printHex(data, fwu_res.length);
+        //printf("<--- %s paste! Addr: %X, Len: %d\r\n", class_id, fwu_res.start_addr - fwu_res.length, fwu_res.length);
+    }
+    reply(FW_UPDATE_EVENT_PASTE_DONE, (void *)&fwu_res);
     return 0;
 }
 
 int GW_FlashIAP::finish(void)
 {
-    task_add(FW_UPDATE_EVENT_FINISH_DONE);
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    reply(FW_UPDATE_EVENT_FINISH_DONE, (void *)&fwu_res);
     return 0;
 }
 

@@ -1,5 +1,28 @@
 #include "gw_fwu_base.h"
 
+void printHex(uint8_t * data, uint32_t len)
+{
+#define ROW_HEX_COUNT 16
+    bool empty = false;
+    uint32_t from = 0;
+
+    while(!empty)
+    {
+        uint8_t i, buffer[ROW_HEX_COUNT*3 + 1] = {0};
+        for(i=0;i<ROW_HEX_COUNT;i++)
+        {
+            sprintf((char *)buffer + (i*3), "%02X ", data[from + i]);
+            if(from + i + 1 >= len)
+            {
+                empty = true;
+                break;
+            }
+        }
+        printf("%08X: %s \r\n", from, buffer);
+        from += i;
+    }
+}
+
 void GW_FwuMethod::task_add(uint32_t id, uint32_t timeout_ms)
 {
     task_id = id;
@@ -8,7 +31,6 @@ void GW_FwuMethod::task_add(uint32_t id, uint32_t timeout_ms)
         delete thd;
     thd = new Thread;
     thd->start(callback(this, &GW_FwuMethod::tasks_run));
-
     timeout_activate(timeout_ms);
 }
 

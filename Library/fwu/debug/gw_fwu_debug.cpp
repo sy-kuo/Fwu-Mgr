@@ -385,7 +385,7 @@ void gw_fwu_debug_init(void)
 
     src_debug->source_add(src_debug_binary2, sizeof(src_debug_binary2));
 
-    m_FwuMgr->supv_register(supv_debug, FW_ROLE_ID_DEBUG_SUPV);
-    m_FwuMgr->src_register(src_debug, FW_ROLE_ID_DEBUG_SRC);
-    m_FwuMgr->dst_register(dst_debug, FW_ROLE_ID_DEBUG_DST);
+    m_FwuMgr->supv_register(supv_debug, FW_ROLE_ID_SUPV_DEBUG);
+    m_FwuMgr->src_register(src_debug, FW_ROLE_ID_SRC_DEBUG);
+    m_FwuMgr->dst_register(dst_debug, FW_ROLE_ID_DST_DEBUG);
 }

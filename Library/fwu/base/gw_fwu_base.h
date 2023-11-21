@@ -6,9 +6,12 @@
 void printHex(uint8_t * data, uint32_t len);
 
 typedef enum {
-    FW_ROLE_ID_DEBUG_SUPV = 0x0001,
-    FW_ROLE_ID_DEBUG_SRC = 0x0001,
-    FW_ROLE_ID_DEBUG_DST = 0x0001,
+    FW_ROLE_ID_SUPV_BASE = 0x0000,
+    FW_ROLE_ID_SUPV_DEBUG,
+    FW_ROLE_ID_SRC_BASE = 0x0000,
+    FW_ROLE_ID_SRC_DEBUG,
+    FW_ROLE_ID_DST_BASE = 0x0000,
+    FW_ROLE_ID_DST_DEBUG,
 } FW_ROLE_ID_E;
 
 typedef enum {
@@ -51,6 +54,7 @@ public:
     int32_t  src;
     int32_t  dst;
 };
+
 class GW_Role_Basic
 {
 public:

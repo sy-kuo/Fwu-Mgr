@@ -37,104 +37,71 @@ uint32_t content_sizeof(void * res)
     return size;
 }
 
-void GW_RestApi::task_add(uint32_t id)
-{
-    task_id = id;
-
-    if(thd != NULL)
-        delete thd;
-    thd = new Thread;
-    thd->start(callback(this, &GW_RestApi::tasks_run));
-}
-
-void GW_RestApi::tasks_run(void)
-{
-    if(task_id == FW_UPDATE_EVENT_CHECKOUTED)
-    {
-        get_endpoint((char *)p_params);
-
-        if(bytes_range != NULL)
-            delete bytes_range;
-        bytes_range = new GW_BufLen("bytes=0-1");
-        int res = rest_api((char *)"%s", sitefiles_id->buffer);
-
-        fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
-        if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
-        {
-            fwu_res.size = content_size;
-            fwu_res.ver = SRC_HTTPS_VERSION;
-            fwu_res.length = SRC_HTTPS_MAX_LENGTH;
-        }
-        printf("<--- %s checkout!\r\n", class_id);
-    }
-    else if(task_id == FW_UPDATE_EVENT_PREPARED)
-    {
-        int res = 0;
-        fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
-        if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
-        {
-            GW_Role_Basic * p_params = (GW_Role_Basic *)this->p_params;
-
-            fwu_res.length = p_params->length;
-            fwu_res.size = p_params->size;
-            fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-            printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, fwu_res.size, fwu_res.length);
-        }
-    }
-    else if(task_id == FW_UPDATE_EVENT_COPY_DONE)
-    {
-        if(bytes_range != NULL)
-            delete bytes_range;
-        bytes_range = new GW_BufLen("bytes=%u-%u", file_addr, file_addr + file_len - 1);
-        int res = rest_api((char *)"%s", sitefiles_id->buffer);
-
-        fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
-        if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
-        {
-            fwu_res.pdata = body->buffer;
-            printf("%s \r\n", bytes_range->buffer);
-            //printf("<--- %s copy! %s \r\n", class_id, bytes_range->buffer);
-        }
-    }
-    else if(task_id == FW_UPDATE_EVENT_FINISH_DONE)
-    {
-        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    }
-    reply(task_id, (void *)&fwu_res);
-}
-
 int GW_RestApi::checkout(void * params)
 {
-    p_params = params;
-    task_add(FW_UPDATE_EVENT_CHECKOUTED);
+    printf("<--- %s checkout!\r\n", class_id);
+    get_endpoint((char *)params);
+
+    if(bytes_range != NULL)
+        delete bytes_range;
+    bytes_range = new GW_BufLen("bytes=0-1");
+    int res = rest_api((char *)"%s", sitefiles_id->buffer);
+
+    fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
+    if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
+    {
+        fwu_res.size = content_size;
+        fwu_res.ver = SRC_HTTPS_VERSION;
+        fwu_res.length = SRC_HTTPS_MAX_LENGTH;
+    }
+    reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)&fwu_res);
     return 0;
 }
 
 int GW_RestApi::prepare(void * params)
 {
-    p_params = params;
-    task_add(FW_UPDATE_EVENT_PREPARED);
+    int res = 0;
+    fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
+    if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
+    {
+        GW_Role_Basic * p_params = (GW_Role_Basic *)params;
+
+        fwu_res.length = p_params->length;
+        fwu_res.size = p_params->size;
+        fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+        printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, fwu_res.size, fwu_res.length);
+    }
+    reply(FW_UPDATE_EVENT_PREPARED, (void *)&fwu_res);
     return 0;
 }
 
 int GW_RestApi::copy(uint32_t start_addr, uint32_t length)
 {
-    file_addr = start_addr;
-    file_len = length;
-    task_add(FW_UPDATE_EVENT_COPY_DONE);
+    if(bytes_range != NULL)
+        delete bytes_range;
+    bytes_range = new GW_BufLen("bytes=%u-%u", start_addr, start_addr + length - 1);
+    int res = rest_api((char *)"%s", sitefiles_id->buffer);
+
+    fwu_res.status = res? res: FW_UPDATE_ERROR_CODE_SUCESS;
+    if(fwu_res.status == FW_UPDATE_ERROR_CODE_SUCESS)
+    {
+        fwu_res.pdata = body->buffer;
+        printf("%s \r\n", bytes_range->buffer);
+        //printf("<--- %s copy! %s \r\n", class_id, bytes_range->buffer);
+    }
+    reply(FW_UPDATE_EVENT_COPY_DONE, (void *)&fwu_res);
     return 0;
 }
 
 int GW_RestApi::finish(void)
 {
-    task_add(FW_UPDATE_EVENT_FINISH_DONE);
+    fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
+    reply(FW_UPDATE_EVENT_FINISH_DONE, (void *)&fwu_res);
     return 0;
 }
 
 int GW_RestApi::get(void)
 {
-    act.lock();
-
     Base64 n;
     size_t encodedLen;
     char * dev_key = n.Encode(device_key->buffer, strlen(device_key->buffer), &encodedLen);
@@ -173,7 +140,6 @@ int GW_RestApi::get(void)
         printf("No res! \r\n");
 
     delete get_req;
-    act.unlock();
 
     return body == NULL? REST_API_FAILED: REST_API_SUCCESSFUL;
 }

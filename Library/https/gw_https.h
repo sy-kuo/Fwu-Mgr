@@ -46,7 +46,6 @@ class GW_RestApi: public GW_FwuMethod
 {
 public:
     GW_RestApi(){
-        thd = NULL;
         server_url = NULL;
         device_key = NULL;
         id = NULL;
@@ -70,13 +69,9 @@ public:
     virtual int finish(void) override;
 private:
     char * class_id = (char *)"Https";
-    void * p_params;
     bool is_debugging;
-    uint8_t task_id;
     uint32_t file_addr, file_len, content_size;
     GW_Role_Basic fwu_res;
-    Thread * thd;
-    Mutex  act;
     NetworkInterface * network;
     GW_BufLen * server_url;
     GW_BufLen * device_key;
@@ -92,9 +87,6 @@ private:
     void get_all_images(void);
     void json_token_info(Json& json, int index);
     void get_endpoint(char * p_cfg);
-
-    void task_add(uint32_t id);
-    void tasks_run(void);
 };
 
 void gw_https_init(void);
