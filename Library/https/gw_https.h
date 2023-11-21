@@ -10,12 +10,7 @@
 #define SRC_HTTPS_VERSION       0x1111
 #define SRC_HTTPS_MAX_LENGTH    0x2000
 
-#define REST_API_INFO                       "/docks?bleMeshProfile.deviceKey="
-#define REST_API_MQTT_INFO                  "/rpc/mqttinfo"
-#define REST_API_TIMESTAMP                  "/rpc/now"
-#define REST_API_SITECERT                   "/sitemqttcerts?entityID="
-#define REST_API_SITEFILES_1                "/sitefiles/9d6b56f1-2fd3-4b40-9898-4b9779605e71"
-//#define REST_API_SITEFILES_1                "/sitefiles/bed083e7-9d9a-440a-b09e-26039ec2e8cb"
+#define CLASS_NAME              "Https"
 
 typedef enum {
     REST_API_SUCCESSFUL,
@@ -57,6 +52,15 @@ public:
         sitefiles_id = NULL;
     }
     ~GW_RestApi(){
+        delete server_url;
+        delete device_key;
+        delete id;
+        delete endpoint;
+        delete endpoint_var;
+        delete parsed_body;
+        delete bytes_range;
+        delete body;
+        delete sitefiles_id;
     }
 
     int body_parse(char * key[], int index);
@@ -68,8 +72,8 @@ public:
     virtual int copy(uint32_t start_addr, uint32_t length) override;
     virtual int finish(void) override;
 private:
-    char * class_id = (char *)"Https";
     bool is_debugging;
+    char * class_id = (char *)CLASS_NAME;
     uint32_t file_addr, file_len, content_size;
     GW_Role_Basic fwu_res;
     NetworkInterface * network;

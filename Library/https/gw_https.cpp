@@ -54,8 +54,7 @@ int GW_RestApi::checkout(void * params)
         fwu_res.ver = SRC_HTTPS_VERSION;
         fwu_res.length = SRC_HTTPS_MAX_LENGTH;
     }
-    reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)&fwu_res);
-    return 0;
+    return reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)&fwu_res);
 }
 
 int GW_RestApi::prepare(void * params)
@@ -71,8 +70,7 @@ int GW_RestApi::prepare(void * params)
         fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
         printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, fwu_res.size, fwu_res.length);
     }
-    reply(FW_UPDATE_EVENT_PREPARED, (void *)&fwu_res);
-    return 0;
+    return reply(FW_UPDATE_EVENT_PREPARED, (void *)&fwu_res);
 }
 
 int GW_RestApi::copy(uint32_t start_addr, uint32_t length)
@@ -89,15 +87,13 @@ int GW_RestApi::copy(uint32_t start_addr, uint32_t length)
         printf("%s \r\n", bytes_range->buffer);
         //printf("<--- %s copy! %s \r\n", class_id, bytes_range->buffer);
     }
-    reply(FW_UPDATE_EVENT_COPY_DONE, (void *)&fwu_res);
-    return 0;
+    return reply(FW_UPDATE_EVENT_COPY_DONE, (void *)&fwu_res);
 }
 
 int GW_RestApi::finish(void)
 {
     fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    reply(FW_UPDATE_EVENT_FINISH_DONE, (void *)&fwu_res);
-    return 0;
+    return reply(FW_UPDATE_EVENT_FINISH_DONE, (void *)&fwu_res);
 }
 
 int GW_RestApi::get(void)

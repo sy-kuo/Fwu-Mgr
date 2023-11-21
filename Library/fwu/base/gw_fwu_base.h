@@ -69,17 +69,6 @@ public:
     int32_t  status;
 };
 
-class GW_Role_Mgr: public GW_Role_Basic
-{
-public:
-    uint32_t id;
-    uint32_t evt_id;
-    uint32_t verify;
-    uint32_t timeout;
-    GW_Roles_Code res;
-    GW_Roles_Code ack;
-};
-
 class GW_FwuMethod
 {
 public:
@@ -95,16 +84,15 @@ public:
     uint16_t module_id;
     friend class GW_FwUpdate;
 private:
+    void * p_params;
+    uint8_t task_id;
+    uint32_t address, length;
     FW_UPDATE_ROLE_E who;
     FW_UPDATE_EVENT_E evt;
     std::function<void(int who, int event, void * data)> f_reply;
     Timeout tmr;
-    GW_Role_Basic tmp;
     Thread * thd = NULL;
-    void * p_params;
-    uint8_t task_id;
-    uint8_t * _pdata;
-    uint32_t _address, _length;
+    GW_Role_Basic fwu_res;
 
     int checkout(void * params, uint32_t timeout_ms);
     int prepare(void * params, uint32_t timeout_ms);
@@ -116,7 +104,7 @@ private:
     void timeout_inactivate(void);
     void timeout(void);
     
-    void task_add(uint32_t id, uint32_t timeout_ms);
+    void task_add(uint8_t id, uint32_t timeout_ms);
     void tasks_run(void);
 };
 

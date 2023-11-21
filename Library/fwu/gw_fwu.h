@@ -15,6 +15,17 @@ typedef enum {
     FW_UPDATE_VERSION_LEVEL_FORCE
 } FW_UPDATE_VERSION_LEVEL_E;
 
+class GW_Role_Mgr: public GW_Role_Basic
+{
+public:
+    uint32_t id;
+    uint32_t evt_id;
+    uint32_t verify;
+    uint32_t timeout;
+    GW_Roles_Code res;
+    GW_Roles_Code ack;
+};
+
 class GW_Params
 {
 public:
@@ -35,13 +46,10 @@ public:
     void ready_checkout(char * data);
 
     void evt_push(int who, int event, void * data);
-
     void evt_push_ms(int who, int event, void * data, uint32_t delay_ms);
 
     void supv_register(GW_FwuMethod * role, int id);
-
     void src_register(GW_FwuMethod * role, int id);
-
     void dst_register(GW_FwuMethod * role, int id);
 
     void test(void);

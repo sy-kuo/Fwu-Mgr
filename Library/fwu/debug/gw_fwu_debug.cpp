@@ -379,9 +379,9 @@ int GW_Supv_Debug::report(void * params)
 
 void gw_fwu_debug_init(void)
 {
-    supv_debug = new GW_Supv_Debug("Dbg-Supv");
-    src_debug = new GW_Src_Debug("Dbg-Src");
-    dst_debug = new GW_Dst_Debug("Dbg-Dst");
+    supv_debug = new GW_Supv_Debug();
+    src_debug = new GW_Src_Debug();
+    dst_debug = new GW_Dst_Debug();
 
     src_debug->source_add(src_debug_binary2, sizeof(src_debug_binary2));
 

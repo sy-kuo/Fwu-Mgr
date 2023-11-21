@@ -23,7 +23,7 @@ void printHex(uint8_t * data, uint32_t len)
     }
 }
 
-void GW_FwuMethod::task_add(uint32_t id, uint32_t timeout_ms)
+void GW_FwuMethod::task_add(uint8_t id, uint32_t timeout_ms)
 {
     task_id = id;
 
@@ -46,11 +46,11 @@ void GW_FwuMethod::tasks_run(void)
     }
     else if(task_id == FW_UPDATE_EVENT_COPY_DONE)
     {
-        copy(_address, _length);
+        copy(address, length);
     }
     else if(task_id == FW_UPDATE_EVENT_PASTE_DONE)
     {
-        paste(_pdata, _length);
+        paste((uint8_t *)p_params, length);
     }
     else if(task_id == FW_UPDATE_EVENT_FINISH_DONE)
     {
@@ -81,8 +81,8 @@ int GW_FwuMethod::prepare(void * params, uint32_t timeout_ms)
 int GW_FwuMethod::copy(uint32_t start_addr, uint32_t length, uint32_t timeout_ms)
 {
     evt = FW_UPDATE_EVENT_COPY_DONE;
-    _address = start_addr;
-    _length = length;
+    address = start_addr;
+    length = length;
     task_add(FW_UPDATE_EVENT_COPY_DONE, timeout_ms);
     return 0;
 }
@@ -90,8 +90,8 @@ int GW_FwuMethod::copy(uint32_t start_addr, uint32_t length, uint32_t timeout_ms
 int GW_FwuMethod::paste(uint8_t * data, uint32_t length, uint32_t timeout_ms)
 {
     evt = FW_UPDATE_EVENT_PASTE_DONE;
-    _pdata = data;
-    _length = length;
+    p_params = data;
+    length = length;
     task_add(FW_UPDATE_EVENT_PASTE_DONE, timeout_ms);
     return 0;
 }
@@ -131,6 +131,6 @@ void GW_FwuMethod::timeout_inactivate(void)
 
 void GW_FwuMethod::timeout(void)
 {
-    tmp.status = FW_UPDATE_ERROR_CODE_TIMEOUT;
-    f_reply(who, evt, &tmp);
+    fwu_res.status = FW_UPDATE_ERROR_CODE_TIMEOUT;
+    f_reply(who, evt, &fwu_res);
 }

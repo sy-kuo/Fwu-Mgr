@@ -9,10 +9,28 @@
 #define DST1_TEST_VERSION    0x2222
 #define DST2_TEST_VERSION    0x2222
 
+#define CLASS_SUPV_NAME      "Dbg-Supv"
+#define CLASS_SRC_NAME       "Dbg-Src"
+#define CLASS_DST_NAME       "Dbg-Dst"
+
+class GW_Supv_Debug: public GW_FwuMethod
+{
+public:
+    GW_Supv_Debug()
+    {
+    }
+    ~GW_Supv_Debug()
+    {
+    }
+    virtual int report(void * params) override;
+    char * class_id = (char *)CLASS_SUPV_NAME;
+    GW_Role_Basic fwu_res;
+};
+
 class GW_Src_Debug: public GW_FwuMethod
 {
 public:
-    GW_Src_Debug(const char * id): class_id((char *)id)
+    GW_Src_Debug()
     {
     }
     ~GW_Src_Debug()
@@ -23,7 +41,7 @@ public:
     virtual int copy(uint32_t start_addr, uint32_t length) override;
     virtual int finish(void) override;
     void source_add(uint8_t * p_src, uint32_t size);
-    char * class_id;
+    char * class_id = (char *)CLASS_SRC_NAME;
     GW_Role_Basic fwu_res;
     uint8_t * p_bytes;
 };
@@ -31,7 +49,7 @@ public:
 class GW_Dst_Debug: public GW_FwuMethod
 {
 public:
-    GW_Dst_Debug(const char * id): class_id((char *)id)
+    GW_Dst_Debug()
     {
     }
     ~GW_Dst_Debug()
@@ -41,21 +59,7 @@ public:
     virtual int prepare(void * params) override;
     virtual int paste(uint8_t * data, uint32_t length) override;
     virtual int finish(void) override;
-    char * class_id;
-    GW_Role_Basic fwu_res;
-};
-
-class GW_Supv_Debug: public GW_FwuMethod
-{
-public:
-    GW_Supv_Debug(const char * id): class_id((char *)id)
-    {
-    }
-    ~GW_Supv_Debug()
-    {
-    }
-    virtual int report(void * params) override;
-    char * class_id;
+    char * class_id = (char *)CLASS_DST_NAME;
     GW_Role_Basic fwu_res;
 };
 

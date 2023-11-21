@@ -3,6 +3,7 @@
 
 #define FLASH_IAP_VERSION       0x0000
 #define FLASH_IAP_MAX_LENGTH    0x2000
+#define CLASS_NAME              "FlashIAP"
 
 class GW_FlashIAP: public FlashIAP, public GW_FwuMethod
 {
@@ -25,11 +26,10 @@ public:
 
     void params(void);
 private:
-    char * class_id = (char *)"FlashIAP";
+    char * class_id = (char *)CLASS_NAME;
+    uint32_t last_sector_size, start_address, erase_size, page_size;
     GW_Role_Basic fwu_res;
 
-    uint8_t task_id;
-    uint32_t last_sector_size, start_address, erase_size, page_size;
     int flash_clear(void);
     int flash_write(size_t offset, const unsigned char* buffer, size_t buffer_length);
     int flash_read(size_t offset, unsigned char * data, size_t data_length);

@@ -8,8 +8,7 @@ int GW_FlashIAP::checkout(void * params)
     fwu_res.ver = FLASH_IAP_VERSION;
     fwu_res.length = FLASH_IAP_MAX_LENGTH;
     fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)&fwu_res);
-    return 0;
+    return reply(FW_UPDATE_EVENT_CHECKOUTED, (void *)&fwu_res);
 }
 
 int GW_FlashIAP::prepare(void * params)
@@ -25,8 +24,7 @@ int GW_FlashIAP::prepare(void * params)
         fwu_res.size = p_params->size;
         printf("<--- %s prepare! Ver: %X, Size: %d, Len: %d \r\n", class_id, p_params->ver, p_params->size, fwu_res.length);
     }
-    reply(FW_UPDATE_EVENT_PREPARED, (void *)&fwu_res);
-    return 0;
+    return reply(FW_UPDATE_EVENT_PREPARED, (void *)&fwu_res);
 }
 
 int GW_FlashIAP::paste(uint8_t * data, uint32_t length)
@@ -39,15 +37,13 @@ int GW_FlashIAP::paste(uint8_t * data, uint32_t length)
         //printHex(data, fwu_res.length);
         //printf("<--- %s paste! Addr: %X, Len: %d\r\n", class_id, fwu_res.start_addr - fwu_res.length, fwu_res.length);
     }
-    reply(FW_UPDATE_EVENT_PASTE_DONE, (void *)&fwu_res);
-    return 0;
+    return reply(FW_UPDATE_EVENT_PASTE_DONE, (void *)&fwu_res);
 }
 
 int GW_FlashIAP::finish(void)
 {
     fwu_res.status = FW_UPDATE_ERROR_CODE_SUCESS;
-    reply(FW_UPDATE_EVENT_FINISH_DONE, (void *)&fwu_res);
-    return 0;
+    return reply(FW_UPDATE_EVENT_FINISH_DONE, (void *)&fwu_res);
 }
 
 int GW_FlashIAP::flash_clear(void)
